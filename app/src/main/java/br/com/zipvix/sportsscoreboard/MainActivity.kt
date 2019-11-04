@@ -8,7 +8,9 @@ import androidx.viewpager.widget.ViewPager
 import androidx.appcompat.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
+import androidx.lifecycle.ViewModelProviders
 import br.com.zipvix.sportsscoreboard.ui.main.SectionsPagerAdapter
+import br.com.zipvix.sportsscoreboard.viewmodel.MainViewModel
 
 class MainActivity : AppCompatActivity() {
 
@@ -24,7 +26,9 @@ class MainActivity : AppCompatActivity() {
 
         fab.setOnClickListener { view ->
             Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                    .setAction("Action", null).show()
+                .setAction("Action", null).show()
         }
+
+
     }
 }
