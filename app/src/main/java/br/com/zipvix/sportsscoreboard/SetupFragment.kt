@@ -19,7 +19,7 @@ class SetupFragment : Fragment(), SeekBar.OnSeekBarChangeListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        viewModel = ViewModelProviders.of(this)[MainViewModel::class.java]
+        viewModel = ViewModelProviders.of(activity!!)[MainViewModel::class.java]
     }
 
     override fun onCreateView(

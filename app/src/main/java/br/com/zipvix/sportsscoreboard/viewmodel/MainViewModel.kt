@@ -8,8 +8,7 @@ import androidx.lifecycle.MutableLiveData
 class MainViewModel(application: Application) : AndroidViewModel(application) {
 
     private val realTime: MutableLiveData<Int> = MutableLiveData(getRealTimeFromSeekBarProgress(2))
-    var seekBarProgress: Int = 2
-        private set
+    private var seekBarProgress: Int = 2
 
     fun setSeekBarProgress(value: Int) {
         seekBarProgress = value
