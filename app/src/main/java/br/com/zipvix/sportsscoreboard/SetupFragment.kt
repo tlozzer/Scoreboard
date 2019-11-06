@@ -1,6 +1,8 @@
 package br.com.zipvix.sportsscoreboard
 
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -18,11 +20,15 @@ class SetupFragment : Fragment(), SeekBar.OnSeekBarChangeListener {
     private lateinit var simTimeSeekBar: SeekBar
     private lateinit var realTimeTextView: TextView
     private lateinit var simTimeTextView: TextView
+    private lateinit var homeTeamEdit: TextInputEditText
+    private lateinit var awayTeamEdit: TextInputEditText
     private lateinit var viewModel: MainViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        viewModel = ViewModelProviders.of(activity!!)[MainViewModel::class.java]
+        viewModel = activity?.run {
+            ViewModelProviders.of(this)[MainViewModel::class.java]
+        } ?: throw Exception(getString(R.string.null_activity_exception))
     }
 
     override fun onCreateView(
@@ -43,14 +49,31 @@ class SetupFragment : Fragment(), SeekBar.OnSeekBarChangeListener {
         simTimeSeekBar.setOnSeekBarChangeListener(this)
 
         realTimeTextView = view?.findViewById(R.id.time_label)!!
-        simTimeTextView = view?.findViewById(R.id.sim_time_label)!!
-
         viewModel.getRealTime().observe(this, Observer<Int> { value ->
             realTimeTextView.text = getString(R.string.real_time_label, value)
         })
 
+        simTimeTextView = view?.findViewById(R.id.sim_time_label)!!
         viewModel.getSimTime().observe(this, Observer<Int> { value ->
             simTimeTextView.text = getString(R.string.sim_time_label, value)
+        })
+
+        homeTeamEdit = view?.findViewById(R.id.home_team_edit)!!
+        homeTeamEdit.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(s: Editable?) {
+                viewModel.homeTeam = s?.toString() ?: ""
+            }
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) { }
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) { }
+        })
+
+        awayTeamEdit = view?.findViewById(R.id.away_team_edit)!!
+        awayTeamEdit.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(s: Editable?) {
+                viewModel.awayTeam = s?.toString() ?: ""
+            }
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) { }
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) { }
         })
     }
 
@@ -61,8 +84,8 @@ class SetupFragment : Fragment(), SeekBar.OnSeekBarChangeListener {
         }
     }
 
-    override fun onStartTrackingTouch(seekBar: SeekBar?) { }
+    override fun onStartTrackingTouch(seekBar: SeekBar?) {}
 
-    override fun onStopTrackingTouch(seekBar: SeekBar?) { }
+    override fun onStopTrackingTouch(seekBar: SeekBar?) {}
 
 }
