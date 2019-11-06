@@ -4,5 +4,12 @@
     <string name="tab_text_2">Timer</string>
     <string name="home_team_content">Home team name</string>
     <string name="away_team_content">Away team name</string>
-    <string name="real_time_label">Real time: {0} minutes</string>
+    <string name="real_time_label">Real time: %d minutes</string>
+    <string name="home_team_hint">Home team</string>
+    <string name="away_team_hint">Away team</string>
+    <string name="sim_time_label">Simulation time: %d minutes</string>
+    <string name="null_activity_exception">Invalid activity</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

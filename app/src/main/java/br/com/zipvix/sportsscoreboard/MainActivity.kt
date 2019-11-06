@@ -6,18 +6,17 @@ import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.tabs.TabLayout
 import androidx.viewpager.widget.ViewPager
 import androidx.appcompat.app.AppCompatActivity
-import android.view.Menu
-import android.view.MenuItem
-import androidx.lifecycle.ViewModelProviders
-import br.com.zipvix.sportsscoreboard.ui.main.SectionsPagerAdapter
-import br.com.zipvix.sportsscoreboard.viewmodel.MainViewModel
+import br.com.zipvix.sportsscoreboard.adapter.SectionsPagerAdapter
 
 class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        val sectionsPagerAdapter = SectionsPagerAdapter(this, supportFragmentManager)
+        val sectionsPagerAdapter = SectionsPagerAdapter(
+            this,
+            supportFragmentManager
+        )
         val viewPager: ViewPager = findViewById(R.id.view_pager)
         viewPager.adapter = sectionsPagerAdapter
         val tabs: TabLayout = findViewById(R.id.tabs)

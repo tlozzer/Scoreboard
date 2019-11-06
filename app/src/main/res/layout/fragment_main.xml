@@ -6,38 +6,54 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="16dp"
-    tools:context=".ui.main.PlaceholderFragment">
+    tools:context=".MainActivity">
 
-    <TextView
-        android:id="@+id/home_name"
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/home_name_text_input"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:contentDescription="@string/home_team_content"
+        android:hint="@string/home_team_hint"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:text="Bayern de Munique" />
+        app:layout_constraintTop_toTopOf="parent">
 
-    <TextView
-        android:id="@+id/away_name"
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/home_team_edit"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            tools:text="Bayern de Munique"/>
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/away_name_text_input"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:contentDescription="@string/away_team_content"
+        android:layout_marginTop="8dp"
+        android:hint="@string/away_team_hint"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/home_name"
-        tools:text="Polonia" />
+        app:layout_constraintTop_toBottomOf="@id/home_name_text_input">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/away_team_edit"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            tools:text="Polonia" />
+
+    </com.google.android.material.textfield.TextInputLayout>
 
     <TextView
         android:id="@+id/time_label"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="24dp"
         android:text="@string/real_time_label"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/away_name" />
+        app:layout_constraintTop_toBottomOf="@+id/away_name_text_input" />
 
     <SeekBar
         android:id="@+id/real_time"
@@ -48,8 +64,29 @@
         android:max="4"
         android:progress="2"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.093"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/time_label" />
+
+    <TextView
+        android:id="@+id/sim_time_label"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:text="@string/sim_time_label"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/real_time" />
+
+    <SeekBar
+        android:id="@+id/sim_time"
+        style="@style/Widget.AppCompat.SeekBar.Discrete"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:max="4"
+        android:progress="4"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/sim_time_label" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
