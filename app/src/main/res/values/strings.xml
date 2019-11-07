@@ -11,4 +11,5 @@
     <string name="null_activity_exception">Invalid activity</string>
     <string name="time_label">Time</string>
     <string name="start_label">Start</string>
+    <string name="time_format">%1$d:00</string>
 </resources>
