@@ -4,34 +4,35 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import br.com.zipvix.sportsscoreboard.model.Timer
 
 class MainViewModel(application: Application) : AndroidViewModel(application) {
 
     private var realTimeSeekBarProgress: Int = 2
     private var simTimeSeekBarProgress: Int = 4
-    private val realTime: MutableLiveData<Int> =
-        MutableLiveData(getRealTimeFromSeekBarProgress(realTimeSeekBarProgress))
-    private val simTime: MutableLiveData<Int> =
-        MutableLiveData(getSimTimeFromSeekBarProgress(simTimeSeekBarProgress))
-    private val homeTeam: MutableLiveData<String> = MutableLiveData("")
-    private val awayTeam: MutableLiveData<String> = MutableLiveData("")
-    private val homeScore: MutableLiveData<Int> = MutableLiveData(0)
-    private val awayScore: MutableLiveData<Int> = MutableLiveData(0)
-    private val timeUntilFinish: MutableLiveData<Long> = MutableLiveData(simTime.value?.toLong() ?: 0)
+    private val realTime =
+        MutableLiveData<Long>(getRealTimeFromSeekBarProgress(realTimeSeekBarProgress))
+    private val simTime =
+        MutableLiveData<Long>(getSimTimeFromSeekBarProgress(simTimeSeekBarProgress))
+    private val homeTeam = MutableLiveData<String>("")
+    private val awayTeam = MutableLiveData<String>("")
+    private val homeScore = MutableLiveData(0)
+    private val awayScore = MutableLiveData(0)
+    private var timer = Timer(realTime.value ?: 0)
 
     fun setRealTimeSeekBarProgress(value: Int) {
         realTimeSeekBarProgress = value
         realTime.value = getRealTimeFromSeekBarProgress(value)
     }
 
-    fun getRealTime(): LiveData<Int> = realTime
+    fun getRealTime(): LiveData<Long> = realTime
 
     fun setSimTimeSeekBarProgress(value: Int) {
         simTimeSeekBarProgress = value
         simTime.value = getSimTimeFromSeekBarProgress(value)
     }
 
-    fun getSimTime(): LiveData<Int> = simTime
+    fun getSimTime(): LiveData<Long> = simTime
 
     fun setHomeTeam(value: String) {
         homeTeam.value = value
@@ -57,7 +58,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
 
     fun getAwayScore(): LiveData<Int> = awayScore
 
-    private fun getRealTimeFromSeekBarProgress(progress: Int): Int {
+    private fun getRealTimeFromSeekBarProgress(progress: Int): Long {
         return when (progress) {
             0 -> 3
             1 -> 5
@@ -67,7 +68,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-    private fun getSimTimeFromSeekBarProgress(progress: Int): Int {
+    private fun getSimTimeFromSeekBarProgress(progress: Int): Long {
         return when (progress) {
             0 -> 5
             1 -> 10
@@ -76,4 +77,10 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
             else -> 45
         }
     }
+
+    fun startTimer() {
+        timer.start()
+    }
+
+    fun getTimeUntilFinish(): LiveData<Long> = timer.getMillisUntilFinish()
 }

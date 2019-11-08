@@ -1,24 +1,20 @@
 package br.com.zipvix.sportsscoreboard.model
 
 import android.os.CountDownTimer
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 
-class Timer(millisInFuture: Long, countDownInterval: Long) :
-    CountDownTimer(millisInFuture, countDownInterval) {
+class Timer(realTimeInMinutes: Long) :
+    CountDownTimer(realTimeInMinutes * 60 * 1000, 1000) {
 
-    var status: Status = Status.STOPPED
-        private set
+    private val millisUntilFinish = MutableLiveData<Long>(realTimeInMinutes * 60 * 1000)
 
     override fun onFinish() {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
-    override fun onTick(milisUntilFinished: Long) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    override fun onTick(millisUntilFinished: Long) {
+        millisUntilFinish.value = millisUntilFinished
     }
 
-
-
-    enum class Status {
-        STOPPED, STARTED, PAUSED
-    }
+    fun getMillisUntilFinish(): LiveData<Long> = millisUntilFinish
 }

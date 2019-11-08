@@ -49,12 +49,12 @@ class SetupFragment : Fragment(), SeekBar.OnSeekBarChangeListener {
         simTimeSeekBar.setOnSeekBarChangeListener(this)
 
         realTimeTextView = view?.findViewById(R.id.time_label)!!
-        viewModel.getRealTime().observe(this, Observer<Int> { value ->
+        viewModel.getRealTime().observe(this, Observer<Long> { value ->
             realTimeTextView.text = getString(R.string.real_time_label, value)
         })
 
         simTimeTextView = view?.findViewById(R.id.sim_time_label)!!
-        viewModel.getSimTime().observe(this, Observer<Int> { value ->
+        viewModel.getSimTime().observe(this, Observer<Long> { value ->
             simTimeTextView.text = getString(R.string.sim_time_label, value)
         })
 
