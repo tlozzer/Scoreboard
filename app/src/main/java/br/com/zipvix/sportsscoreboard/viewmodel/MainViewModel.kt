@@ -17,6 +17,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     private val awayTeam: MutableLiveData<String> = MutableLiveData("")
     private val homeScore: MutableLiveData<Int> = MutableLiveData(0)
     private val awayScore: MutableLiveData<Int> = MutableLiveData(0)
+    private val timeUntilFinish: MutableLiveData<Long> = MutableLiveData(simTime.value?.toLong() ?: 0)
 
     fun setRealTimeSeekBarProgress(value: Int) {
         realTimeSeekBarProgress = value

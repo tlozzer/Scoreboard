@@ -62,4 +62,8 @@ class TimerFragment : Fragment() {
             time.text = getString(R.string.time_format, value)
         })
     }
+
+    fun startTimer() {
+
+    }
 }
