@@ -6,6 +6,7 @@ import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
 import br.com.zipvix.sportsscoreboard.R
 import br.com.zipvix.sportsscoreboard.SetupFragment
+import br.com.zipvix.sportsscoreboard.TimerFragment
 
 private val TAB_TITLES = arrayOf(
     R.string.tab_text_1,
@@ -23,8 +24,8 @@ class SectionsPagerAdapter(private val context: Context, fm: FragmentManager) :
         // getItem is called to instantiate the fragment for the given page.
         // Return a PlaceholderFragment (defined as a static inner class below).
         return when (position) {
-            //1 -> SetupFragment()
-            else -> SetupFragment()
+            0 -> SetupFragment()
+            else -> TimerFragment()
         }
     }
 
@@ -33,6 +34,6 @@ class SectionsPagerAdapter(private val context: Context, fm: FragmentManager) :
     }
 
     override fun getCount(): Int {
-        return 1
+        return 2
     }
 }

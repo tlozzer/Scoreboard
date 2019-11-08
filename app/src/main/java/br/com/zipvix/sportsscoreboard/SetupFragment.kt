@@ -61,7 +61,7 @@ class SetupFragment : Fragment(), SeekBar.OnSeekBarChangeListener {
         homeTeamEdit = view?.findViewById(R.id.home_team_edit)!!
         homeTeamEdit.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
-                viewModel.homeTeam = s?.toString() ?: ""
+                viewModel.setHomeTeam(s?.toString() ?: "")
             }
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) { }
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) { }
@@ -70,7 +70,7 @@ class SetupFragment : Fragment(), SeekBar.OnSeekBarChangeListener {
         awayTeamEdit = view?.findViewById(R.id.away_team_edit)!!
         awayTeamEdit.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
-                viewModel.awayTeam = s?.toString() ?: ""
+                viewModel.setAwayTeam(s?.toString() ?: "")
             }
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) { }
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) { }
