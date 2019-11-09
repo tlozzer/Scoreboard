@@ -45,7 +45,7 @@ class TimerFragment : Fragment() {
         awayScore = view?.findViewById(R.id.away_score)!!
         button = view?.findViewById(R.id.start)!!
 
-        button.setOnClickListener { viewModel.startTimer() }
+        button.setOnClickListener { viewModel.start() }
         homeScore.setOnClickListener { viewModel.setHomeScore(viewModel.getHomeScore().value?.plus(1) ?: 0) }
         awayScore.setOnClickListener { viewModel.setAwayScore(viewModel.getAwayScore().value?.plus(1) ?: 0) }
 
@@ -69,7 +69,7 @@ class TimerFragment : Fragment() {
             time.text = value.toString()
         })
 
-        viewModel.getTimeUntilFinish().observe(this, Observer { value ->
+        viewModel.getTimeInMillisToFinish().observe(this, Observer { value ->
             time.text = getString(R.string.time_format, value)
         })
     }

@@ -4,17 +4,24 @@ import android.os.CountDownTimer
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 
-class Timer(realTimeInMinutes: Long) :
-    CountDownTimer(realTimeInMinutes * 60 * 1000, 1000) {
+object Timer {
 
-    private val millisUntilFinish = MutableLiveData<Long>(realTimeInMinutes * 60 * 1000)
+    private var timer: CountDownTimer? = null
+    private val millisUntilFinished = MutableLiveData<Long>(0L)
 
-    override fun onFinish() {
+    fun start(millisInFuture: Long, countDownInterval: Long) {
+        timer?.cancel()
+        timer = object : CountDownTimer(millisInFuture, countDownInterval) {
+            override fun onFinish() {
+            }
+
+            override fun onTick(millisUntilFinished: Long) {
+                this@Timer.millisUntilFinished.value = millisUntilFinished
+            }
+
+        }
+        timer?.start()
     }
 
-    override fun onTick(millisUntilFinished: Long) {
-        millisUntilFinish.value = millisUntilFinished
-    }
-
-    fun getMillisUntilFinish(): LiveData<Long> = millisUntilFinish
+    fun getMillisUntilFinish(): LiveData<Long> = millisUntilFinished
 }

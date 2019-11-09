@@ -3,7 +3,9 @@ package br.com.zipvix.sportsscoreboard.viewmodel
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Observer
 import br.com.zipvix.sportsscoreboard.model.Timer
 
 class MainViewModel(application: Application) : AndroidViewModel(application) {
@@ -14,11 +16,22 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         MutableLiveData<Long>(getRealTimeFromSeekBarProgress(realTimeSeekBarProgress))
     private val simTime =
         MutableLiveData<Long>(getSimTimeFromSeekBarProgress(simTimeSeekBarProgress))
+    private val timeToFinish = MediatorLiveData<Long>()
     private val homeTeam = MutableLiveData<String>("")
     private val awayTeam = MutableLiveData<String>("")
     private val homeScore = MutableLiveData(0)
     private val awayScore = MutableLiveData(0)
-    private var timer = Timer(realTime.value ?: 0)
+
+    init {
+        timeToFinish.let {
+            it.addSource(Timer.getMillisUntilFinish(), Observer { value ->
+                it.value = value
+            })
+            it.addSource(realTime, Observer { value ->
+                it.value = value * 60 * 1000
+            })
+        }
+    }
 
     fun setRealTimeSeekBarProgress(value: Int) {
         realTimeSeekBarProgress = value
@@ -78,9 +91,12 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-    fun startTimer() {
-        timer.start()
+    fun start() {
+        Timer.start((realTime.value ?: 0) * 60 * 1000, 1000)
+        homeScore.value = 0
+        awayScore.value = 0
     }
 
-    fun getTimeUntilFinish(): LiveData<Long> = timer.getMillisUntilFinish()
+    fun getTimeInMillisToFinish(): LiveData<Long> = timeToFinish
+
 }
