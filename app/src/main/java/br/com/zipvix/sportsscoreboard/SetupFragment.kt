@@ -6,11 +6,13 @@ import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.SeekBar
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
+import androidx.viewpager.widget.ViewPager
 import br.com.zipvix.sportsscoreboard.viewmodel.MainViewModel
 import com.google.android.material.textfield.TextInputEditText
 
@@ -22,6 +24,7 @@ class SetupFragment : Fragment(), SeekBar.OnSeekBarChangeListener {
     private lateinit var simTimeTextView: TextView
     private lateinit var homeTeamEdit: TextInputEditText
     private lateinit var awayTeamEdit: TextInputEditText
+    private lateinit var button: Button
     private lateinit var viewModel: MainViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -75,6 +78,12 @@ class SetupFragment : Fragment(), SeekBar.OnSeekBarChangeListener {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) { }
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) { }
         })
+
+        button = view?.findViewById(R.id.start)!!
+        button.setOnClickListener {
+            viewModel.start()
+            (activity as MainActivity).viewPager.setCurrentItem(1, true)
+        }
     }
 
     override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
@@ -87,5 +96,4 @@ class SetupFragment : Fragment(), SeekBar.OnSeekBarChangeListener {
     override fun onStartTrackingTouch(seekBar: SeekBar?) {}
 
     override fun onStopTrackingTouch(seekBar: SeekBar?) {}
-
 }
