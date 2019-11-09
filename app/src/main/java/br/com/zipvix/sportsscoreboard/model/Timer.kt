@@ -9,14 +9,15 @@ object Timer {
     private var timer: CountDownTimer? = null
     private val millisUntilFinished = MutableLiveData<Long>(0L)
 
-    fun start(millisInFuture: Long, countDownInterval: Long) {
+    fun start(millisInFuture: Long, simulatedMillisInFuture: Long) {
+        val fraction = millisInFuture.toDouble() / simulatedMillisInFuture
         timer?.cancel()
-        timer = object : CountDownTimer(millisInFuture, countDownInterval) {
+        timer = object : CountDownTimer(millisInFuture, (fraction * 1000).toLong()) {
             override fun onFinish() {
             }
 
             override fun onTick(millisUntilFinished: Long) {
-                this@Timer.millisUntilFinished.value = millisUntilFinished
+                this@Timer.millisUntilFinished.value = (millisUntilFinished / fraction).toLong()
             }
 
         }

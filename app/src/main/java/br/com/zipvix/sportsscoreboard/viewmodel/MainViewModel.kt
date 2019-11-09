@@ -5,7 +5,6 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Observer
 import br.com.zipvix.sportsscoreboard.model.Timer
 
 class MainViewModel(application: Application) : AndroidViewModel(application) {
@@ -24,12 +23,12 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
 
     init {
         timeToFinish.let {
-            it.addSource(Timer.getMillisUntilFinish(), Observer { value ->
+            it.addSource(Timer.getMillisUntilFinish()) { value ->
                 it.value = value
-            })
-            it.addSource(realTime, Observer { value ->
+            }
+            it.addSource(simTime) { value ->
                 it.value = value * 60 * 1000
-            })
+            }
         }
     }
 
@@ -92,7 +91,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun start() {
-        Timer.start((realTime.value ?: 0) * 60 * 1000, 1000)
+        Timer.start((realTime.value ?: 0) * 60 * 1000, (simTime.value ?: 0) * 60 * 1000)
         homeScore.value = 0
         awayScore.value = 0
     }
