@@ -10,6 +10,8 @@ import br.com.zipvix.sportsscoreboard.adapter.SectionsPagerAdapter
 
 class MainActivity : AppCompatActivity() {
 
+    lateinit var viewPager: ViewPager
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -17,7 +19,7 @@ class MainActivity : AppCompatActivity() {
             this,
             supportFragmentManager
         )
-        val viewPager: ViewPager = findViewById(R.id.view_pager)
+        viewPager = findViewById(R.id.view_pager)
         viewPager.adapter = sectionsPagerAdapter
         val tabs: TabLayout = findViewById(R.id.tabs)
         tabs.setupWithViewPager(viewPager)
