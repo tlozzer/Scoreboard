@@ -1,11 +1,13 @@
 package br.com.zipvix.sportsscoreboard
 
+import android.app.Activity
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import android.widget.SeekBar
 import android.widget.TextView
@@ -16,8 +18,7 @@ import androidx.viewpager.widget.ViewPager
 import br.com.zipvix.sportsscoreboard.viewmodel.MainViewModel
 import com.google.android.material.textfield.TextInputEditText
 
-class SetupFragment : Fragment(), SeekBar.OnSeekBarChangeListener {
-
+class SetupFragment : Fragment(), SeekBar.OnSeekBarChangeListener, View.OnFocusChangeListener {
     private lateinit var realTimeSeekBar: SeekBar
     private lateinit var simTimeSeekBar: SeekBar
     private lateinit var realTimeTextView: TextView
@@ -56,28 +57,33 @@ class SetupFragment : Fragment(), SeekBar.OnSeekBarChangeListener {
             realTimeTextView.text = getString(R.string.real_time_label, value)
         })
 
-        simTimeTextView = view?.findViewById(R.id.sim_time_label)!!
-        viewModel.getSimTime().observe(this, Observer<Long> { value ->
-            simTimeTextView.text = getString(R.string.sim_time_label, value)
-        })
+        simTimeTextView = view?.findViewById<TextView>(R.id.sim_time_label)?.also {
+            viewModel.getSimTime().observe(this, Observer<Long> { value ->
+                it.text = getString(R.string.sim_time_label, value)
+            })
+        } ?: throw Exception("View not found")
 
-        homeTeamEdit = view?.findViewById(R.id.home_team_edit)!!
-        homeTeamEdit.addTextChangedListener(object : TextWatcher {
-            override fun afterTextChanged(s: Editable?) {
-                viewModel.setHomeTeam(s?.toString() ?: "")
-            }
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) { }
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) { }
-        })
+        homeTeamEdit = view?.findViewById<TextInputEditText>(R.id.home_team_edit)?.also {
+            it.addTextChangedListener(object : TextWatcher {
+                override fun afterTextChanged(s: Editable?) {
+                    viewModel.setHomeTeam(s?.toString() ?: "")
+                }
+                override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) { }
+                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) { }
+            })
+            it.onFocusChangeListener = this
+        } ?: throw Exception("View not found")
 
-        awayTeamEdit = view?.findViewById(R.id.away_team_edit)!!
-        awayTeamEdit.addTextChangedListener(object : TextWatcher {
-            override fun afterTextChanged(s: Editable?) {
-                viewModel.setAwayTeam(s?.toString() ?: "")
-            }
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) { }
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) { }
-        })
+        awayTeamEdit = view?.findViewById<TextInputEditText>(R.id.away_team_edit)?.also {
+            it.addTextChangedListener(object : TextWatcher {
+                override fun afterTextChanged(s: Editable?) {
+                    viewModel.setAwayTeam(s?.toString() ?: "")
+                }
+                override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) { }
+                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) { }
+            })
+            it.onFocusChangeListener = this
+        } ?: throw Exception("View not found")
 
         button = view?.findViewById(R.id.start)!!
         button.setOnClickListener {
@@ -96,4 +102,13 @@ class SetupFragment : Fragment(), SeekBar.OnSeekBarChangeListener {
     override fun onStartTrackingTouch(seekBar: SeekBar?) {}
 
     override fun onStopTrackingTouch(seekBar: SeekBar?) {}
+
+    private fun hideKeyboard() {
+        val imm: InputMethodManager = activity?.getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.hideSoftInputFromWindow(view?.rootView?.windowToken, 0)
+    }
+
+    override fun onFocusChange(view: View?, hasFocus: Boolean) {
+        if (!hasFocus) hideKeyboard()
+    }
 }

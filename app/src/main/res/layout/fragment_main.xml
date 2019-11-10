@@ -22,7 +22,11 @@
             android:id="@+id/home_team_edit"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            tools:text="Bayern de Munique"/>
+            android:inputType="textCapWords"
+            android:imeOptions="actionNext"
+            android:maxLines="1"
+            android:ems="10"
+            tools:text="Bayern de Munique" />
 
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -41,6 +45,10 @@
             android:id="@+id/away_team_edit"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:inputType="textCapWords"
+            android:imeOptions="actionNext"
+            android:maxLines="1"
+            android:ems="10"
             tools:text="Polonia" />
 
     </com.google.android.material.textfield.TextInputLayout>
