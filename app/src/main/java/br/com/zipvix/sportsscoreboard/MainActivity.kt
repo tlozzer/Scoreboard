@@ -7,7 +7,10 @@ import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.tabs.TabLayout
 import androidx.viewpager.widget.ViewPager
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProviders
 import br.com.zipvix.sportsscoreboard.adapter.SectionsPagerAdapter
+import br.com.zipvix.sportsscoreboard.viewmodel.MainViewModel
 
 class MainActivity : AppCompatActivity() {
 
@@ -26,5 +29,15 @@ class MainActivity : AppCompatActivity() {
         viewPager.adapter = sectionsPagerAdapter
         val tabs: TabLayout = findViewById(R.id.tabs)
         tabs.setupWithViewPager(viewPager)
+
+        ViewModelProviders.of(this)[MainViewModel::class.java].also {
+            it.getStatus().observe(this, Observer { status ->
+                if (status == MainViewModel.Status.RUNNING) {
+                    window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+                } else {
+                    window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+                }
+            })
+        }
     }
 }

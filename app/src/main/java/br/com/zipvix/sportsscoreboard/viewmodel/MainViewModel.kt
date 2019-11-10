@@ -20,6 +20,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     private val awayTeam = MutableLiveData<String>("")
     private val homeScore = MutableLiveData(0)
     private val awayScore = MutableLiveData(0)
+    private val status = MutableLiveData<Status>(Status.STOPPED)
 
     init {
         timeToFinish.let {
@@ -91,11 +92,19 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun start() {
-        Timer.start((realTime.value ?: 0) * 60 * 1000, (simTime.value ?: 0) * 60 * 1000)
+        Timer.start((realTime.value ?: 0) * 60 * 1000, (simTime.value ?: 0) * 60 * 1000) {
+            status.value = Status.STOPPED
+        }
         homeScore.value = 0
         awayScore.value = 0
+        status.value = Status.RUNNING
     }
 
     fun getTimeInMillisToFinish(): LiveData<Long> = timeToFinish
 
+    fun getStatus(): LiveData<Status> = status
+
+    enum class Status {
+        STOPPED, RUNNING, PAUSED
+    }
 }
