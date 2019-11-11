@@ -8,7 +8,7 @@ android {
     compileSdkVersion 28
     defaultConfig {
         applicationId "br.com.zipvix.sportsscoreboard"
-        minSdkVersion 19
+        minSdkVersion 21
         targetSdkVersion 28
         versionCode 1
         versionName "1.0"
@@ -38,10 +38,10 @@ dependencies {
     implementation 'androidx.lifecycle:lifecycle-extensions:2.1.0'
 
     // Google Analytics
-    implementation 'com.google.firebase:firebase-analytics:17.2.0'
+    implementation 'com.google.firebase:firebase-core:17.2.1'
 
     // Firestore
-    //implementation 'com.google.firebase:firebase-firestore:20.0.0'
+    implementation 'com.google.firebase:firebase-firestore:21.2.1'
 }
 
 apply plugin: 'com.google.gms.google-services'
