@@ -5,9 +5,13 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
+import br.com.zipvix.sportsscoreboard.model.TeamListModel
 import br.com.zipvix.sportsscoreboard.model.Timer
+import br.com.zipvix.sportsscoreboard.repository.FirestoreRepository
 
 class MainViewModel(application: Application) : AndroidViewModel(application) {
+
+    private val repository = FirestoreRepository()
 
     private var realTimeSeekBarProgress: Int = 2
     private var simTimeSeekBarProgress: Int = 4
@@ -21,6 +25,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     private val homeScore = MutableLiveData(0)
     private val awayScore = MutableLiveData(0)
     private val status = MutableLiveData<Status>(Status.STOPPED)
+    private val teams = MutableLiveData<TeamListModel>()
 
     init {
         timeToFinish.let {
@@ -32,6 +37,14 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
             }
         }
     }
+
+    fun loadTeams() {
+        repository.listTeams { model ->
+            teams.value = model
+        }
+    }
+
+    fun getTeams(): LiveData<TeamListModel> = teams
 
     fun setRealTimeSeekBarProgress(value: Int) {
         realTimeSeekBarProgress = value
