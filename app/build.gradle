@@ -36,4 +36,12 @@ dependencies {
 
     // LiveData and ViewModel
     implementation 'androidx.lifecycle:lifecycle-extensions:2.1.0'
+
+    // Google Analytics
+    implementation 'com.google.firebase:firebase-analytics:17.2.0'
+
+    // Firestore
+    //implementation 'com.google.firebase:firebase-firestore:20.0.0'
 }
+
+apply plugin: 'com.google.gms.google-services'
