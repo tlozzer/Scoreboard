@@ -51,10 +51,12 @@ class TimerFragment : Fragment() {
 
         Glide.with(this)
             .load("https://firebasestorage.googleapis.com/v0/b/sports-scoreboard-c7ce8.appspot.com/o/flags%2Fbrazil.png?alt=media&token=5399b0ec-79df-45e5-adca-72f1742a48b8")
+            .placeholder(R.drawable.placeholder_flag)
             .into(homeImage)
 
         Glide.with(this)
             .load("https://firebasestorage.googleapis.com/v0/b/sports-scoreboard-c7ce8.appspot.com/o/flags%2Fargentina.png?alt=media&token=a492dd65-0543-4de5-baf4-df71ab4ea036")
+            .placeholder(R.drawable.placeholder_flag)
             .into(awayImage)
 
         homeScore.setOnClickListener { viewModel.setHomeScore(viewModel.getHomeScore().value?.plus(1) ?: 0) }
