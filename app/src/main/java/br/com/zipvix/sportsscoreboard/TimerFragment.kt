@@ -5,11 +5,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import br.com.zipvix.sportsscoreboard.viewmodel.MainViewModel
+import com.bumptech.glide.Glide
 
 class TimerFragment : Fragment() {
 
@@ -19,6 +21,8 @@ class TimerFragment : Fragment() {
     private lateinit var time: TextView
     private lateinit var homeScore: TextView
     private lateinit var awayScore: TextView
+    private lateinit var homeImage: ImageView
+    private lateinit var awayImage: ImageView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,6 +46,16 @@ class TimerFragment : Fragment() {
         time = view?.findViewById(R.id.time)!!
         homeScore = view?.findViewById(R.id.home_score)!!
         awayScore = view?.findViewById(R.id.away_score)!!
+        homeImage = view?.findViewById(R.id.home_image)!!
+        awayImage = view?.findViewById(R.id.away_image)!!
+
+        Glide.with(this)
+            .load("https://firebasestorage.googleapis.com/v0/b/sports-scoreboard-c7ce8.appspot.com/o/flags%2Fbrazil.png?alt=media&token=5399b0ec-79df-45e5-adca-72f1742a48b8")
+            .into(homeImage)
+
+        Glide.with(this)
+            .load("https://firebasestorage.googleapis.com/v0/b/sports-scoreboard-c7ce8.appspot.com/o/flags%2Fargentina.png?alt=media&token=a492dd65-0543-4de5-baf4-df71ab4ea036")
+            .into(awayImage)
 
         homeScore.setOnClickListener { viewModel.setHomeScore(viewModel.getHomeScore().value?.plus(1) ?: 0) }
         awayScore.setOnClickListener { viewModel.setAwayScore(viewModel.getAwayScore().value?.plus(1) ?: 0) }
