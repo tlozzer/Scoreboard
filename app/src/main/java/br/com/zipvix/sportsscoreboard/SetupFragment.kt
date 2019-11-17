@@ -12,19 +12,16 @@ import android.widget.*
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
+import br.com.zipvix.sportsscoreboard.repository.entity.Team
 import br.com.zipvix.sportsscoreboard.viewmodel.MainViewModel
 
 class SetupFragment : Fragment(), SeekBar.OnSeekBarChangeListener, View.OnFocusChangeListener {
-    private lateinit var realTimeSeekBar: SeekBar
-    private lateinit var simTimeSeekBar: SeekBar
     private lateinit var realTimeTextView: TextView
     private lateinit var simTimeTextView: TextView
     private lateinit var homeTeamAutoComplete: AutoCompleteTextView
     private lateinit var awayTeamAutoComplete: AutoCompleteTextView
-    private lateinit var button: Button
     private lateinit var viewModel: MainViewModel
-    private lateinit var adapter: ArrayAdapter<String>
-    private val teamsAutoComplete = mutableListOf<String>()
+    private val teamsAutoComplete = mutableListOf<Team>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,20 +41,20 @@ class SetupFragment : Fragment(), SeekBar.OnSeekBarChangeListener, View.OnFocusC
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-        adapter = activity?.run {
-            ArrayAdapter<String>(this, R.layout.team_list_autocomplete_item, teamsAutoComplete)
+        val adapter: ArrayAdapter<Team> = activity?.run {
+            ArrayAdapter<Team>(this, R.layout.team_list_autocomplete_item, teamsAutoComplete)
         } ?: throw Exception(getString(R.string.null_activity_exception))
 
         viewModel.getTeams().observe(this, Observer { teams ->
             adapter.clear()
-            adapter.addAll(teams.list)
+            adapter.addAll(teams)
         })
 
-        realTimeSeekBar = view?.findViewById(R.id.real_time)!!
-        realTimeSeekBar.setOnSeekBarChangeListener(this)
+        view?.findViewById<SeekBar>(R.id.real_time)?.setOnSeekBarChangeListener(this)
+            ?: throw Exception("Seekbar view not found")
 
-        simTimeSeekBar = view?.findViewById(R.id.sim_time)!!
-        simTimeSeekBar.setOnSeekBarChangeListener(this)
+        view?.findViewById<SeekBar>(R.id.sim_time)?.setOnSeekBarChangeListener(this)
+            ?: throw Exception("Seekbar viee not found")
 
         realTimeTextView = view?.findViewById(R.id.time_label)!!
         viewModel.getRealTime().observe(this, Observer<Long> { value ->
@@ -74,7 +71,8 @@ class SetupFragment : Fragment(), SeekBar.OnSeekBarChangeListener, View.OnFocusC
             view?.findViewById<AutoCompleteTextView>(R.id.home_team_autocomplete)?.also {
                 it.addTextChangedListener(object : TextWatcher {
                     override fun afterTextChanged(s: Editable?) {
-                        viewModel.setHomeTeam(s?.toString() ?: "")
+                        viewModel.setHomeName(s?.toString() ?: "")
+                        viewModel.setHomeTeam(null)
                     }
 
                     override fun beforeTextChanged(
@@ -95,13 +93,19 @@ class SetupFragment : Fragment(), SeekBar.OnSeekBarChangeListener, View.OnFocusC
                 })
                 it.onFocusChangeListener = this
                 it.setAdapter(adapter)
+                it.setOnItemClickListener { _, _, position, _ ->
+                    viewModel.setHomeTeam(
+                        adapter.getItem(position) ?: throw Exception("Invalid team")
+                    )
+                }
             } ?: throw Exception("View not found")
 
         awayTeamAutoComplete =
             view?.findViewById<AutoCompleteTextView>(R.id.away_team_autocomplete)?.also {
                 it.addTextChangedListener(object : TextWatcher {
                     override fun afterTextChanged(s: Editable?) {
-                        viewModel.setAwayTeam(s?.toString() ?: "")
+                        viewModel.setAwayName(s?.toString() ?: "")
+                        viewModel.setAwayTeam(null)
                     }
 
                     override fun beforeTextChanged(
@@ -122,9 +126,14 @@ class SetupFragment : Fragment(), SeekBar.OnSeekBarChangeListener, View.OnFocusC
                 })
                 it.onFocusChangeListener = this
                 it.setAdapter(adapter)
+                it.setOnItemClickListener { _, _, position, _ ->
+                    viewModel.setAwayTeam(
+                        adapter.getItem(position) ?: throw Exception("Invalid team")
+                    )
+                }
             } ?: throw Exception("View not found")
 
-        button = view?.findViewById(R.id.start)!!
+        val button: Button = view?.findViewById(R.id.start)!!
         button.setOnClickListener {
             viewModel.start()
             (activity as MainActivity).viewPager.setCurrentItem(1, true)

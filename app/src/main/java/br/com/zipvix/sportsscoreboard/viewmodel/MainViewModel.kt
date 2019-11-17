@@ -5,7 +5,6 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
-import br.com.zipvix.sportsscoreboard.model.TeamListModel
 import br.com.zipvix.sportsscoreboard.model.Timer
 import br.com.zipvix.sportsscoreboard.repository.FirestoreRepository
 import br.com.zipvix.sportsscoreboard.repository.entity.Team
@@ -21,10 +20,12 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     private val simTime =
         MutableLiveData<Long>(getSimTimeFromSeekBarProgress(simTimeSeekBarProgress))
     private val timeToFinish = MediatorLiveData<Long>()
-    private val homeTeam = MutableLiveData<Team>()
-    private val awayTeam = MutableLiveData<Team>()
+    private val homeTeam = MutableLiveData<Team?>(null)
+    private val awayTeam = MutableLiveData<Team?>(null)
     private val homeScore = MutableLiveData(0)
     private val awayScore = MutableLiveData(0)
+    private val homeTeamName = MediatorLiveData<String>()
+    private val awayTeamName = MediatorLiveData<String>()
     private val status = MutableLiveData<Status>(Status.STOPPED)
     private val teams = MutableLiveData<List<Team>>()
 
@@ -35,6 +36,18 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
             }
             it.addSource(simTime) { value ->
                 it.value = value * 60 * 1000
+            }
+        }
+
+        homeTeamName.let {
+            it.addSource(homeTeam) { team ->
+                it.value = team?.name ?: ""
+            }
+        }
+
+        awayTeamName.let {
+            it.addSource(awayTeam) { team ->
+                it.value = team?.name ?: ""
             }
         }
     }
@@ -61,17 +74,29 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
 
     fun getSimTime(): LiveData<Long> = simTime
 
-    fun setHomeTeam(value: Team) {
+    fun setHomeTeam(value: Team?) {
         homeTeam.value = value
     }
 
-    fun getHomeTeam(): LiveData<Team> = homeTeam
+    fun getHomeTeam(): LiveData<Team?> = homeTeam
 
-    fun setAwayTeam(value: Team) {
+    fun getHomeName(): LiveData<String> = homeTeamName
+
+    fun setHomeName(name: String) {
+        homeTeamName.value = name
+    }
+
+    fun setAwayTeam(value: Team?) {
         awayTeam.value = value
     }
 
-    fun getAwayTeam(): LiveData<Team> = awayTeam
+    fun getAwayTeam(): LiveData<Team?> = awayTeam
+
+    fun getAwayName(): LiveData<String> = awayTeamName
+
+    fun setAwayName(name: String) {
+        awayTeamName.value = name
+    }
 
     fun setHomeScore(value: Int) {
         homeScore.value = value
