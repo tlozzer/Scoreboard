@@ -4,12 +4,13 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import br.com.zipvix.sportsscoreboard.viewmodel.MainViewModel
+import com.bumptech.glide.Glide
 
 class TimerFragment : Fragment() {
 
@@ -19,6 +20,8 @@ class TimerFragment : Fragment() {
     private lateinit var time: TextView
     private lateinit var homeScore: TextView
     private lateinit var awayScore: TextView
+    private lateinit var homeImage: ImageView
+    private lateinit var awayImage: ImageView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,16 +45,36 @@ class TimerFragment : Fragment() {
         time = view?.findViewById(R.id.time)!!
         homeScore = view?.findViewById(R.id.home_score)!!
         awayScore = view?.findViewById(R.id.away_score)!!
+        homeImage = view?.findViewById(R.id.home_image)!!
+        awayImage = view?.findViewById(R.id.away_image)!!
 
-        homeScore.setOnClickListener { viewModel.setHomeScore(viewModel.getHomeScore().value?.plus(1) ?: 0) }
-        awayScore.setOnClickListener { viewModel.setAwayScore(viewModel.getAwayScore().value?.plus(1) ?: 0) }
+        homeScore.setOnClickListener {
+            viewModel.setHomeScore(
+                viewModel.getHomeScore().value?.plus(1) ?: 0
+            )
+        }
+        awayScore.setOnClickListener {
+            viewModel.setAwayScore(
+                viewModel.getAwayScore().value?.plus(1) ?: 0
+            )
+        }
+
+        viewModel.getHomeName().observe(this, Observer { name -> homeTeam.text = name })
 
         viewModel.getHomeTeam().observe(this, Observer { value ->
-            homeTeam.text = value
+            Glide.with(this)
+                .load(value?.image)
+                .placeholder(R.drawable.placeholder_flag)
+                .into(homeImage)
         })
 
+        viewModel.getAwayName().observe(this, Observer { name -> awayTeam.text = name })
+
         viewModel.getAwayTeam().observe(this, Observer { value ->
-            awayTeam.text = value
+            Glide.with(this)
+                .load(value?.image)
+                .placeholder(R.drawable.placeholder_flag)
+                .into(awayImage)
         })
 
         viewModel.getHomeScore().observe(this, Observer { value ->

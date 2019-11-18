@@ -5,9 +5,9 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
-import br.com.zipvix.sportsscoreboard.model.TeamListModel
 import br.com.zipvix.sportsscoreboard.model.Timer
 import br.com.zipvix.sportsscoreboard.repository.FirestoreRepository
+import br.com.zipvix.sportsscoreboard.repository.entity.Team
 
 class MainViewModel(application: Application) : AndroidViewModel(application) {
 
@@ -20,12 +20,14 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     private val simTime =
         MutableLiveData<Long>(getSimTimeFromSeekBarProgress(simTimeSeekBarProgress))
     private val timeToFinish = MediatorLiveData<Long>()
-    private val homeTeam = MutableLiveData<String>("")
-    private val awayTeam = MutableLiveData<String>("")
+    private val homeTeam = MutableLiveData<Team?>(null)
+    private val awayTeam = MutableLiveData<Team?>(null)
     private val homeScore = MutableLiveData(0)
     private val awayScore = MutableLiveData(0)
+    private val homeTeamName = MediatorLiveData<String>()
+    private val awayTeamName = MediatorLiveData<String>()
     private val status = MutableLiveData<Status>(Status.STOPPED)
-    private val teams = MutableLiveData<TeamListModel>()
+    private val teams = MutableLiveData<List<Team>>()
 
     init {
         timeToFinish.let {
@@ -36,15 +38,27 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
                 it.value = value * 60 * 1000
             }
         }
-    }
 
-    fun loadTeams() {
-        repository.listTeams { model ->
-            teams.value = model
+        homeTeamName.let {
+            it.addSource(homeTeam) { team ->
+                it.value = team?.name ?: ""
+            }
+        }
+
+        awayTeamName.let {
+            it.addSource(awayTeam) { team ->
+                it.value = team?.name ?: ""
+            }
         }
     }
 
-    fun getTeams(): LiveData<TeamListModel> = teams
+    fun loadTeams() {
+        repository.listTeams { teams ->
+            this.teams.value = teams
+        }
+    }
+
+    fun getTeams(): LiveData<List<Team>> = teams
 
     fun setRealTimeSeekBarProgress(value: Int) {
         realTimeSeekBarProgress = value
@@ -60,17 +74,29 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
 
     fun getSimTime(): LiveData<Long> = simTime
 
-    fun setHomeTeam(value: String) {
+    fun setHomeTeam(value: Team?) {
         homeTeam.value = value
     }
 
-    fun getHomeTeam(): LiveData<String> = homeTeam
+    fun getHomeTeam(): LiveData<Team?> = homeTeam
 
-    fun setAwayTeam(value: String) {
+    fun getHomeName(): LiveData<String> = homeTeamName
+
+    fun setHomeName(name: String) {
+        homeTeamName.value = name
+    }
+
+    fun setAwayTeam(value: Team?) {
         awayTeam.value = value
     }
 
-    fun getAwayTeam(): LiveData<String> = awayTeam
+    fun getAwayTeam(): LiveData<Team?> = awayTeam
+
+    fun getAwayName(): LiveData<String> = awayTeamName
+
+    fun setAwayName(name: String) {
+        awayTeamName.value = name
+    }
 
     fun setHomeScore(value: Int) {
         homeScore.value = value
