@@ -1,5 +1,7 @@
 package br.com.zipvix.sportsscoreboard
 
+import android.media.AudioManager
+import android.media.MediaPlayer
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -91,6 +93,13 @@ class TimerFragment : Fragment() {
 
         viewModel.getTimeInMillisToFinish().observe(this, Observer { value ->
             time.text = getString(R.string.time_format, value)
+        })
+
+        viewModel.getStatus().observe(this, Observer { status ->
+            if (status == MainViewModel.Status.FINISHED) {
+                val mediaPlayer: MediaPlayer? = MediaPlayer.create(activity, R.raw.whistle)
+                mediaPlayer?.start()
+            }
         })
     }
 }
