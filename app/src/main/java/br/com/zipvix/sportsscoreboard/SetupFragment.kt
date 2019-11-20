@@ -71,7 +71,6 @@ class SetupFragment : Fragment(), SeekBar.OnSeekBarChangeListener, View.OnFocusC
             view?.findViewById<AutoCompleteTextView>(R.id.home_team_autocomplete)?.also {
                 it.addTextChangedListener(object : TextWatcher {
                     override fun afterTextChanged(s: Editable?) {
-                        viewModel.setHomeTeam(null)
                         viewModel.setHomeName(s?.toString() ?: "")
                     }
 
@@ -104,7 +103,6 @@ class SetupFragment : Fragment(), SeekBar.OnSeekBarChangeListener, View.OnFocusC
             view?.findViewById<AutoCompleteTextView>(R.id.away_team_autocomplete)?.also {
                 it.addTextChangedListener(object : TextWatcher {
                     override fun afterTextChanged(s: Editable?) {
-                        viewModel.setAwayTeam(null)
                         viewModel.setAwayName(s?.toString() ?: "")
                     }
 
