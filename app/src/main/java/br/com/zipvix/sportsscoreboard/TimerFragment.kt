@@ -45,7 +45,6 @@ class TimerFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_timer, container, false)
     }
 
@@ -107,7 +106,7 @@ class TimerFragment : Fragment() {
         })
 
         viewModel.getStatus().observe(this, Observer { status ->
-            if (status == MainViewModel.Status.FINISHED && loadWhistleReady) {
+            if (status == MainViewModel.Status.FINISHING && loadWhistleReady) {
                 mediaPlayer.start()
             }
         })

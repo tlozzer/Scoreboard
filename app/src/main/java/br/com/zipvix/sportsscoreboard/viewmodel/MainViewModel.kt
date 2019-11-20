@@ -144,10 +144,12 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
 
     fun start() {
         Timer.start((realTime.value ?: 0) * 60 * 1000, (simTime.value ?: 0) * 60 * 1000) {
+            status.value = Status.FINISHING
             status.value = Status.FINISHED
         }
         homeScore.value = 0
         awayScore.value = 0
+        status.value = Status.STOPPED
         status.value = Status.RUNNING
     }
 
@@ -156,6 +158,6 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     fun getStatus(): LiveData<Status> = status
 
     enum class Status {
-        STOPPED, RUNNING, PAUSED, FINISHED
+        STOPPED, RUNNING, FINISHING, FINISHED
     }
 }
