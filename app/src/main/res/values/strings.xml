@@ -14,4 +14,6 @@
     <string name="time_format" translatable="false">%1$TM:%1$TS</string>
     <string name="home_team_flag_content">Home team flag</string>
     <string name="away_team_flag_content">Away team flag</string>
+    <string name="versus_sign_content">Versus sign</string>
+    <string name="versus_sign" translatable="false">x</string>
 </resources>
