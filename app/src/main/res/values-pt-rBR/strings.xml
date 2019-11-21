@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Placar Eletrônico</string>
+    <string name="away_team_content">Nome do time visitante</string>
+    <string name="away_team_flag_content">Bandeira do time visitante</string>
+    <string name="away_team_hint">Time visitante</string>
+    <string name="home_team_content">Nome do time mandante</string>
+    <string name="home_team_flag_content">Bandeira do time mandante</string>
+    <string name="home_team_hint">Time mandante</string>
+    <string name="null_activity_exception">Activity inválida</string>
+    <string name="real_time_label">Tempo real: %d minutos</string>
+    <string name="sim_time_label">Tempo simulado: %d minutos</string>
+    <string name="start_label">Iniciar</string>
+    <string name="tab_text_1">Configuração</string>
+    <string name="tab_text_2">Placar</string>
+    <string name="time_label">Tempo</string>
+    <string name="versus_sign_content">Símbolo versus</string>
+</resources>

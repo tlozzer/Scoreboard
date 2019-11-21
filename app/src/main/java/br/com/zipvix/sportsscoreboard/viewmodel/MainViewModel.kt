@@ -20,12 +20,12 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     private val simTime =
         MutableLiveData<Long>(getSimTimeFromSeekBarProgress(simTimeSeekBarProgress))
     private val timeToFinish = MediatorLiveData<Long>()
-    private val homeTeam = MutableLiveData<Team?>(null)
-    private val awayTeam = MutableLiveData<Team?>(null)
+    private val homeTeam = MediatorLiveData<Team?>()
+    private val awayTeam = MediatorLiveData<Team?>()
     private val homeScore = MutableLiveData(0)
     private val awayScore = MutableLiveData(0)
-    private val homeTeamName = MediatorLiveData<String>()
-    private val awayTeamName = MediatorLiveData<String>()
+    private val homeTeamName = MutableLiveData<String>("")
+    private val awayTeamName = MutableLiveData<String>("")
     private val status = MutableLiveData<Status>(Status.STOPPED)
     private val teams = MutableLiveData<List<Team>>()
 
@@ -39,17 +39,27 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
             }
         }
 
-        homeTeamName.let {
-            it.addSource(homeTeam) { team ->
-                it.value = team?.name ?: ""
+        homeTeam.let {
+            it.addSource(homeTeamName) { name ->
+                if (name != it.value?.name) {
+                    it.value = null
+                }
             }
         }
 
-        awayTeamName.let {
-            it.addSource(awayTeam) { team ->
-                it.value = team?.name ?: ""
+        awayTeam.let {
+            it.addSource(awayTeamName) { name ->
+                if (name != it.value?.name) {
+                    it.value = null
+                }
             }
         }
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        homeTeam.removeSource(homeTeamName)
+        awayTeam.removeSource(awayTeamName)
     }
 
     fun loadTeams() {
@@ -74,8 +84,10 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
 
     fun getSimTime(): LiveData<Long> = simTime
 
-    fun setHomeTeam(value: Team?) {
-        homeTeam.value = value
+    fun setHomeTeam(team: Team?) {
+        if (team != homeTeam.value) {
+            homeTeam.value = team
+        }
     }
 
     fun getHomeTeam(): LiveData<Team?> = homeTeam
@@ -132,10 +144,12 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
 
     fun start() {
         Timer.start((realTime.value ?: 0) * 60 * 1000, (simTime.value ?: 0) * 60 * 1000) {
+            status.value = Status.FINISHING
             status.value = Status.FINISHED
         }
         homeScore.value = 0
         awayScore.value = 0
+        status.value = Status.STOPPED
         status.value = Status.RUNNING
     }
 
@@ -144,6 +158,6 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     fun getStatus(): LiveData<Status> = status
 
     enum class Status {
-        STOPPED, RUNNING, PAUSED, FINISHED
+        STOPPED, RUNNING, FINISHING, FINISHED
     }
 }
