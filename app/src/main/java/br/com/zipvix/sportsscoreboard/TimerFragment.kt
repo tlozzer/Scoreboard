@@ -16,6 +16,9 @@ import com.bumptech.glide.Glide
 
 class TimerFragment : Fragment() {
 
+    private val WHISTLE_URI = "android.resource://br.com.zipvix.sportsscoreboard/raw/whistle"
+    private val GOAL_URI = "android.resource://br.com.zipvix.sportsscoreboard/raw/goal"
+
     private lateinit var viewModel: MainViewModel
     private lateinit var homeTeam: TextView
     private lateinit var awayTeam: TextView
@@ -24,8 +27,10 @@ class TimerFragment : Fragment() {
     private lateinit var awayScore: TextView
     private lateinit var homeImage: ImageView
     private lateinit var awayImage: ImageView
-    private val mediaPlayer = MediaPlayer()
+    private val whistleMediaPlayer = MediaPlayer()
+    private val goalMediaPlayer = MediaPlayer()
     private var loadWhistleReady = false
+    private var loadGoalReady = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,10 +39,16 @@ class TimerFragment : Fragment() {
             ViewModelProviders.of(this)[MainViewModel::class.java]
         } ?: throw Exception(getString(R.string.null_activity_exception))
 
-        mediaPlayer.apply {
-            setDataSource(requireActivity(), Uri.parse("android.resource://br.com.zipvix.sportsscoreboard/raw/whistle"))
+        whistleMediaPlayer.apply {
+            setDataSource(requireActivity(), Uri.parse(WHISTLE_URI))
             prepareAsync()
             setOnPreparedListener { loadWhistleReady = true }
+        }
+
+        goalMediaPlayer.apply {
+            setDataSource(requireActivity(), Uri.parse(GOAL_URI))
+            prepareAsync()
+            setOnPreparedListener { loadGoalReady = true }
         }
     }
 
@@ -66,11 +77,13 @@ class TimerFragment : Fragment() {
             viewModel.setHomeScore(
                 viewModel.getHomeScore().value?.plus(1) ?: 0
             )
+            goalMediaPlayer.start()
         }
         awayScore.setOnClickListener {
             viewModel.setAwayScore(
                 viewModel.getAwayScore().value?.plus(1) ?: 0
             )
+            goalMediaPlayer.start()
         }
 
         viewModel.getHomeTeam().observe(this, Observer { value ->
@@ -107,7 +120,7 @@ class TimerFragment : Fragment() {
 
         viewModel.getStatus().observe(this, Observer { status ->
             if (status == MainViewModel.Status.FINISHING && loadWhistleReady) {
-                mediaPlayer.start()
+                whistleMediaPlayer.start()
             }
         })
     }
