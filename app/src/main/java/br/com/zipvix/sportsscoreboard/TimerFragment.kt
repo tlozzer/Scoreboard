@@ -11,8 +11,9 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
+import br.com.zipvix.sportsscoreboard.glide.GlideApp
 import br.com.zipvix.sportsscoreboard.viewmodel.MainViewModel
-import com.bumptech.glide.Glide
+import com.google.firebase.storage.FirebaseStorage
 
 class TimerFragment : Fragment() {
 
@@ -31,6 +32,7 @@ class TimerFragment : Fragment() {
     private val goalMediaPlayer = MediaPlayer()
     private var loadWhistleReady = false
     private var loadGoalReady = false
+    private val storage = FirebaseStorage.getInstance()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -79,6 +81,7 @@ class TimerFragment : Fragment() {
             )
             goalMediaPlayer.start()
         }
+
         awayScore.setOnClickListener {
             viewModel.setAwayScore(
                 viewModel.getAwayScore().value?.plus(1) ?: 0
@@ -86,39 +89,52 @@ class TimerFragment : Fragment() {
             goalMediaPlayer.start()
         }
 
-        viewModel.getHomeTeam().observe(this, Observer { value ->
-            Glide.with(this)
-                .load(value?.image)
-                .placeholder(R.drawable.placeholder_flag)
-                .into(homeImage)
+        viewModel.getHomeTeam().observe(this, Observer { team ->
+            team?.image?.also {
+                val gsRef = storage.getReferenceFromUrl(it)
+                GlideApp.with(this)
+                    .load(gsRef)
+                    .placeholder(R.drawable.placeholder_flag)
+                    .into(homeImage)
+            }
         })
 
-        viewModel.getAwayName().observe(this, Observer { name -> awayTeam.text = name })
+        viewModel.getAwayName().observe(this, Observer
+        { name -> awayTeam.text = name })
 
-        viewModel.getAwayTeam().observe(this, Observer { value ->
-            Glide.with(this)
-                .load(value?.image)
-                .placeholder(R.drawable.placeholder_flag)
-                .into(awayImage)
+        viewModel.getAwayTeam().observe(this, Observer
+        { team ->
+            team?.image?.also {
+                val gsRef = storage.getReferenceFromUrl(it)
+                GlideApp.with(this)
+                    .load(gsRef)
+                    .placeholder(R.drawable.placeholder_flag)
+                    .into(awayImage)
+            }
         })
 
-        viewModel.getHomeScore().observe(this, Observer { value ->
+        viewModel.getHomeScore().observe(this, Observer
+        { value ->
             homeScore.text = value.toString()
         })
 
-        viewModel.getAwayScore().observe(this, Observer { value ->
+        viewModel.getAwayScore().observe(this, Observer
+        { value ->
             awayScore.text = value.toString()
         })
 
-        viewModel.getSimTime().observe(this, Observer { value ->
+        viewModel.getSimTime().observe(this, Observer
+        { value ->
             time.text = value.toString()
         })
 
-        viewModel.getTimeInMillisToFinish().observe(this, Observer { value ->
+        viewModel.getTimeInMillisToFinish().observe(this, Observer
+        { value ->
             time.text = getString(R.string.time_format, value)
         })
 
-        viewModel.getStatus().observe(this, Observer { status ->
+        viewModel.getStatus().observe(this, Observer
+        { status ->
             if (status == MainViewModel.Status.FINISHING && loadWhistleReady) {
                 whistleMediaPlayer.start()
             }
