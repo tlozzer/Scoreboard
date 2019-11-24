@@ -8,6 +8,7 @@ class FirestoreRepository {
 
     fun listTeams(onLoadFinished: (List<Team>?) -> Unit) {
         db.collection(TEAMS_COLLECTION)
+            .orderBy(NAME_FIELD)
             .addSnapshotListener { querySnapshot, firebaseFirestoreException ->
                 if (firebaseFirestoreException != null) return@addSnapshotListener
 
@@ -18,5 +19,6 @@ class FirestoreRepository {
 
     private companion object {
         const val TEAMS_COLLECTION = "teams"
+        const val NAME_FIELD = "name"
     }
 }
