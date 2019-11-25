@@ -36,46 +36,52 @@
 
     <TextView
         android:id="@+id/home_score"
-        android:layout_width="0dp"
+        android:layout_width="180dp"
         android:layout_height="wrap_content"
         android:layout_marginEnd="16dp"
+        android:ellipsize="marquee"
         android:gravity="end"
+        android:singleLine="true"
         android:textAppearance="@style/TextAppearance.AppCompat.Display4"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:textStyle="bold"
         app:layout_constraintEnd_toStartOf="@+id/vsTextView"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/home_image"
         app:layout_constraintTop_toBottomOf="@+id/time_label"
         tools:text="10" />
 
     <ImageView
         android:id="@+id/home_image"
-        android:layout_width="@dimen/flag_width"
-        android:layout_height="@dimen/flag_height"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         android:contentDescription="@string/home_team_flag_content"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/home_score"
+        app:layout_constraintEnd_toStartOf="@id/home_score"
+        app:layout_constraintDimensionRatio="H,10:7"
         tools:src="@drawable/googleg_standard_color_18" />
 
     <TextView
         android:id="@+id/away_score"
-        android:layout_width="0dp"
+        android:layout_width="180dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
+        android:ellipsize="marquee"
         android:gravity="start"
+        android:singleLine="true"
         android:textAppearance="@style/TextAppearance.AppCompat.Display4"
-        app:layout_constraintEnd_toStartOf="@+id/away_image"
+        android:textStyle="bold"
         app:layout_constraintStart_toEndOf="@+id/vsTextView"
         app:layout_constraintTop_toTopOf="@+id/home_score"
         tools:text="10" />
 
     <ImageView
         android:id="@+id/away_image"
-        android:layout_width="@dimen/flag_width"
-        android:layout_height="@dimen/flag_height"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         android:contentDescription="@string/away_team_flag_content"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/away_score"
+        app:layout_constraintStart_toEndOf="@id/away_score"
+        app:layout_constraintDimensionRatio="H,10:7"
         tools:src="@drawable/googleg_standard_color_18" />
 
     <TextView
