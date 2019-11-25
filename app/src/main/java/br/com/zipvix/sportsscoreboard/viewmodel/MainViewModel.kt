@@ -28,6 +28,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     private val awayTeamName = MutableLiveData<String>("")
     private val status = MutableLiveData<Status>(Status.STOPPED)
     private val teams = MutableLiveData<List<Team>>()
+    var twoHalfs = true
 
     init {
         timeToFinish.let {

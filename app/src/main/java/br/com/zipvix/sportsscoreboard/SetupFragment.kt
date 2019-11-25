@@ -137,6 +137,12 @@ class SetupFragment : Fragment(), SeekBar.OnSeekBarChangeListener, View.OnFocusC
             (activity as MainActivity).viewPager.setCurrentItem(1, true)
         }
 
+        view?.findViewById<Switch>(R.id.twoHalfsSwitch)?.also {
+            it.setOnCheckedChangeListener { _, isChecked ->
+                viewModel.twoHalfs = isChecked
+            }
+        }
+
         viewModel.loadTeams()
     }
 

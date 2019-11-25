@@ -16,4 +16,5 @@
     <string name="away_team_flag_content">Away team flag</string>
     <string name="versus_sign_content">Versus sign</string>
     <string name="versus_sign" translatable="false">x</string>
+    <string name="two_halfs_label">Match has 2 halfs</string>
 </resources>
