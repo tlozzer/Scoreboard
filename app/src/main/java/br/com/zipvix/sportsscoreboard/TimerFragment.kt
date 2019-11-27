@@ -11,14 +11,12 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
+import br.com.zipvix.sportsscoreboard.business.Match
 import br.com.zipvix.sportsscoreboard.glide.GlideApp
 import br.com.zipvix.sportsscoreboard.viewmodel.MainViewModel
 import com.google.firebase.storage.FirebaseStorage
 
 class TimerFragment : Fragment() {
-
-    private val WHISTLE_URI = "android.resource://br.com.zipvix.sportsscoreboard/raw/whistle"
-    private val GOAL_URI = "android.resource://br.com.zipvix.sportsscoreboard/raw/goal"
 
     private lateinit var viewModel: MainViewModel
     private lateinit var homeTeam: TextView
@@ -64,10 +62,7 @@ class TimerFragment : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-        homeTeam = view?.findViewById<TextView>(R.id.home_name)?.also {
-            viewModel.getHomeName().observe(this, Observer { name -> it.text = name })
-        } ?: throw Exception("Invalid home team view")
-
+        homeTeam = view?.findViewById(R.id.home_name)!!
         awayTeam = view?.findViewById(R.id.away_name)!!
         time = view?.findViewById(R.id.time)!!
         homeScore = view?.findViewById(R.id.home_score)!!
@@ -76,40 +71,43 @@ class TimerFragment : Fragment() {
         awayImage = view?.findViewById(R.id.away_image)!!
 
         homeScore.setOnClickListener {
-            viewModel.setHomeScore(
-                viewModel.getHomeScore().value?.plus(1) ?: 0
-            )
-            goalMediaPlayer.start()
+            viewModel.setHomeScore((viewModel.getHomeScore().value ?: 0) + 1)
+            if (loadGoalReady)
+                goalMediaPlayer.start()
         }
 
         awayScore.setOnClickListener {
-            viewModel.setAwayScore(
-                viewModel.getAwayScore().value?.plus(1) ?: 0
-            )
-            goalMediaPlayer.start()
+            viewModel.setAwayScore((viewModel.getAwayScore().value ?: 0) + 1)
+            if (loadGoalReady)
+                goalMediaPlayer.start()
         }
 
         viewModel.getHomeTeam().observe(this, Observer { team ->
-            team?.image?.also {
-                val gsRef = storage.getReferenceFromUrl(it)
-                GlideApp.with(this)
-                    .load(gsRef)
-                    .placeholder(R.drawable.placeholder_flag)
-                    .into(homeImage)
+            team?.also {
+                homeTeam.text = team.name
+
+                it.image?.also { img ->
+                    val gsRef = storage.getReferenceFromUrl(img)
+                    GlideApp.with(this)
+                        .load(gsRef)
+                        .placeholder(R.drawable.placeholder_flag)
+                        .into(homeImage)
+                }
             }
         })
 
-        viewModel.getAwayName().observe(this, Observer
-        { name -> awayTeam.text = name })
-
         viewModel.getAwayTeam().observe(this, Observer
         { team ->
-            team?.image?.also {
-                val gsRef = storage.getReferenceFromUrl(it)
-                GlideApp.with(this)
-                    .load(gsRef)
-                    .placeholder(R.drawable.placeholder_flag)
-                    .into(awayImage)
+            team?.also {
+                awayTeam.text = team.name
+
+                it.image?.also { img ->
+                    val gsRef = storage.getReferenceFromUrl(img)
+                    GlideApp.with(this)
+                        .load(gsRef)
+                        .placeholder(R.drawable.placeholder_flag)
+                        .into(awayImage)
+                }
             }
         })
 
@@ -128,16 +126,22 @@ class TimerFragment : Fragment() {
             time.text = value.toString()
         })
 
-        viewModel.getTimeInMillisToFinish().observe(this, Observer
+        viewModel.getTimeToFinish().observe(this, Observer
         { value ->
             time.text = getString(R.string.time_format, value)
         })
 
         viewModel.getStatus().observe(this, Observer
         { status ->
-            if (status == MainViewModel.Status.FINISHING && loadWhistleReady) {
+            if (status == Match.Status.FINISHING && loadWhistleReady) {
                 whistleMediaPlayer.start()
             }
         })
+    }
+
+    companion object {
+        private const val WHISTLE_URI =
+            "android.resource://br.com.zipvix.sportsscoreboard/raw/whistle"
+        private const val GOAL_URI = "android.resource://br.com.zipvix.sportsscoreboard/raw/goal"
     }
 }
