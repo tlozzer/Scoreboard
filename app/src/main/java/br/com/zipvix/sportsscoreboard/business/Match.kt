@@ -10,30 +10,35 @@ class Match(
     private val hasTwoHalf: Boolean = true,
     private val eventListener: MatchEventListener? = null
 ) {
-    private val homeScore = MutableLiveData(0)
-    private val awayScore = MutableLiveData(0)
-    private val status = MutableLiveData<Status>(Status.STOPPED)
-    private val currentHalf = MutableLiveData(0)
+    private val _homeScore = MutableLiveData(0)
+    private val _awayScore = MutableLiveData(0)
+    private val _status = MutableLiveData<Status>(Status.STOPPED)
+    private val _currentHalf = MutableLiveData(0)
 
-    fun getStatus(): LiveData<Status> = status
+    val homeScore: LiveData<Int>
+        get() = _homeScore
 
-    fun getHomeScore(): LiveData<Int> = homeScore
+    val awayScore: LiveData<Int>
+        get() = _awayScore
 
-    fun getAwayScore(): LiveData<Int> = awayScore
+    val status: LiveData<Status>
+        get() = _status
 
-    fun getCurrentHalf(): LiveData<Int> = currentHalf
+    val currentHalf: LiveData<Int>
+        get() = _currentHalf
 
-    fun getTimeToFinish(): LiveData<Long> = Timer.getMillisUntilFinish()
+    val timeToFinish: LiveData<Long>
+        get() = Timer.getMillisUntilFinish()
 
     fun start() {
-        currentHalf.value = currentHalf.value?.plus(1)
-        if ((currentHalf.value ?: 0) > 1 && !hasTwoHalf)
+        _currentHalf.value = _currentHalf.value?.plus(1)
+        if ((_currentHalf.value ?: 0) > 1 && !hasTwoHalf)
             return
-        if ((currentHalf.value ?: 0) > 2)
+        if ((_currentHalf.value ?: 0) > 2)
             return
 
         eventListener?.also {
-            when (currentHalf.value) {
+            when (_currentHalf.value) {
                 1 -> it.beforeStartMatch()
                 2 -> it.beforeStartSecondHalf()
             }
@@ -41,16 +46,16 @@ class Match(
 
         Timer.start(realHalfTimeInMinutes * 60 * 1000L, simulatedHalfTimeInMinutes * 60 * 1000L) {
             eventListener?.also {
-                when (currentHalf.value) {
+                when (_currentHalf.value) {
                     1 -> it.beforeEndOfFirstHalf()
                     2 -> it.beforeEndOfMatch()
                 }
             }
-            status.value = Status.FINISHING
+            _status.value = Status.FINISHING
 
-            status.value = Status.FINISHED
+            _status.value = Status.FINISHED
             eventListener?.also {
-                when (currentHalf.value) {
+                when (_currentHalf.value) {
                     1 -> it.onEndOfFirstHalf()
                     2 -> it.onEndOfMatch()
                 }
@@ -58,22 +63,24 @@ class Match(
         }
 
         eventListener?.also {
-            when (currentHalf.value) {
+            when (_currentHalf.value) {
                 1 -> it.onStartMatch()
                 2 -> it.onStartSecondHalf()
             }
         }
 
-        status.value = Status.STOPPED
-        status.value = Status.RUNNING
+        _homeScore.value = 0
+        _awayScore.value = 0
+        _status.value = Status.STOPPED
+        _status.value = Status.RUNNING
     }
 
-    fun setHomeScore(score: Int) {
-        homeScore.value = score
+    fun addHomeScore() {
+        _homeScore.value = (_homeScore.value ?: 0) + 1
     }
 
-    fun setAwayScore(score: Int) {
-        awayScore.value = score
+    fun addAwayScore() {
+        _awayScore.value = (_awayScore.value ?: 0) + 1
     }
 
     enum class Status { STOPPED, RUNNING, FINISHING, FINISHED }

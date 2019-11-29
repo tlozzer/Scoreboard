@@ -1,10 +1,7 @@
 package br.com.zipvix.sportsscoreboard.viewmodel
 
 import android.app.Application
-import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MediatorLiveData
-import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.*
 import br.com.zipvix.sportsscoreboard.business.Match
 import br.com.zipvix.sportsscoreboard.repository.FirestoreRepository
 import br.com.zipvix.sportsscoreboard.repository.entity.Team
@@ -39,11 +36,11 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-    fun getCurrentHalf(): LiveData<Int> = match.getCurrentHalf()
+    val currentHalf = Transformations.map(match.currentHalf) { it }
 
-    fun getStatus(): LiveData<Match.Status> = match.getStatus()
+    fun getStatus(): LiveData<Match.Status> = match.status
 
-    fun getTimeToFinish(): LiveData<Long> = match.getTimeToFinish()
+    fun getTimeToFinish(): LiveData<Long> = match.timeToFinish
 
     fun matchCanStart(): LiveData<Boolean> = canStart
 
@@ -83,14 +80,14 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-    fun getHomeScore(): LiveData<Int> = match.getHomeScore()
-    fun setHomeScore(score: Int) {
-        match.setHomeScore(score)
+    fun getHomeScore(): LiveData<Int> = match.homeScore
+    fun addHomeScore() {
+        match.addHomeScore()
     }
 
-    fun getAwayScore(): LiveData<Int> = match.getAwayScore()
-    fun setAwayScore(score: Int) {
-        match.setAwayScore(score)
+    fun getAwayScore(): LiveData<Int> = match.awayScore
+    fun addAwayScore() {
+        match.addAwayScore()
     }
 
     private fun getRealTimeFromSeekBarProgress(progress: Int): Long {

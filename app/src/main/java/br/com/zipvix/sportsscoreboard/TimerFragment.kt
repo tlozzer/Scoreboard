@@ -71,13 +71,13 @@ class TimerFragment : Fragment() {
         awayImage = view?.findViewById(R.id.away_image)!!
 
         homeScore.setOnClickListener {
-            viewModel.setHomeScore((viewModel.getHomeScore().value ?: 0) + 1)
+            viewModel.addHomeScore()
             if (loadGoalReady)
                 goalMediaPlayer.start()
         }
 
         awayScore.setOnClickListener {
-            viewModel.setAwayScore((viewModel.getAwayScore().value ?: 0) + 1)
+            viewModel.addAwayScore()
             if (loadGoalReady)
                 goalMediaPlayer.start()
         }
