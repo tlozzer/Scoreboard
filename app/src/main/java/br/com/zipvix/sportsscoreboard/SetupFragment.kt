@@ -90,7 +90,7 @@ class SetupFragment : Fragment(), SeekBar.OnSeekBarChangeListener {
             (activity as MainActivity).viewPager.setCurrentItem(1, true)
         }
 
-        viewModel.matchCanStart().observe(this, Observer {
+        viewModel.canStart.observe(this, Observer {
             button.isEnabled = it
         })
 

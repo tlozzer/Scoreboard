@@ -21,7 +21,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     private var match: Match =
         Match(realTime.value?.toInt() ?: 0, simTime.value?.toInt() ?: 0, twoHalf)
     private val teams = MutableLiveData<List<Team>>()
-    private val canStart = MediatorLiveData<Boolean>().apply {
+    private val _canStart = MediatorLiveData<Boolean>().apply {
         this.addSource(homeTeam) {
             this.value = awayTeam.value != null
         }
@@ -38,16 +38,17 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
 
     val currentHalf = Transformations.map(match.currentHalf) { it }
 
-    fun getStatus(): LiveData<Match.Status> = match.status
+    val timeToFinish = Transformations.map(match.timeToFinish) { it }
 
-    fun getTimeToFinish(): LiveData<Long> = match.timeToFinish
+    val status = Transformations.map(match.status) { it }
 
-    fun matchCanStart(): LiveData<Boolean> = canStart
+    val canStart: LiveData<Boolean>
+        get() = _canStart
 
     override fun onCleared() {
         super.onCleared()
-        canStart.removeSource(homeTeam)
-        canStart.removeSource(awayTeam)
+        _canStart.removeSource(homeTeam)
+        _canStart.removeSource(awayTeam)
     }
 
     fun getTeams(): LiveData<List<Team>> = teams
@@ -111,7 +112,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun start() {
-        canStart.value?.also {
+        _canStart.value?.also {
             if (it) {
                 match = Match(realTime.value?.toInt() ?: 0, simTime.value?.toInt() ?: 0, twoHalf)
                 match.start()

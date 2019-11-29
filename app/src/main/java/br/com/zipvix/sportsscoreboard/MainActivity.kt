@@ -30,7 +30,7 @@ class MainActivity : AppCompatActivity() {
         tabs.setupWithViewPager(viewPager)
 
         ViewModelProviders.of(this)[MainViewModel::class.java].also {
-            it.getStatus().observe(this, Observer { status ->
+            it.status.observe(this, Observer { status ->
                 if (status == Match.Status.RUNNING) {
                     window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
                 } else {

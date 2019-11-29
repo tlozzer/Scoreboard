@@ -126,12 +126,12 @@ class TimerFragment : Fragment() {
             time.text = value.toString()
         })
 
-        viewModel.getTimeToFinish().observe(this, Observer
+        viewModel.timeToFinish.observe(this, Observer
         { value ->
             time.text = getString(R.string.time_format, value)
         })
 
-        viewModel.getStatus().observe(this, Observer
+        viewModel.status.observe(this, Observer
         { status ->
             if (status == Match.Status.FINISHING && loadWhistleReady) {
                 whistleMediaPlayer.start()
