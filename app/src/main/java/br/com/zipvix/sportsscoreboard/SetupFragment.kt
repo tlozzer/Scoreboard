@@ -42,7 +42,7 @@ class SetupFragment : Fragment(), SeekBar.OnSeekBarChangeListener {
             ArrayAdapter<Team>(this, R.layout.team_list_autocomplete_item, teamsAutoComplete)
         } ?: throw Exception(getString(R.string.null_activity_exception))
 
-        viewModel.getTeams().observe(this, Observer { teams ->
+        viewModel.teams.observe(this, Observer { teams ->
             adapter.clear()
             adapter.addAll(teams)
         })
@@ -51,15 +51,15 @@ class SetupFragment : Fragment(), SeekBar.OnSeekBarChangeListener {
             ?: throw Exception("Seekbar view not found")
 
         view?.findViewById<SeekBar>(R.id.sim_time)?.setOnSeekBarChangeListener(this)
-            ?: throw Exception("Seekbar viee not found")
+            ?: throw Exception("Seekbar view not found")
 
         realTimeTextView = view?.findViewById(R.id.time_label)!!
-        viewModel.getRealTime().observe(this, Observer<Long> { value ->
+        viewModel.realTime.observe(this, Observer<Long> { value ->
             realTimeTextView.text = getString(R.string.real_time_label, value)
         })
 
         simTimeTextView = view?.findViewById<TextView>(R.id.sim_time_label)?.also {
-            viewModel.getSimTime().observe(this, Observer<Long> { value ->
+            viewModel.simTime.observe(this, Observer<Long> { value ->
                 it.text = getString(R.string.sim_time_label, value)
             })
         } ?: throw Exception("View not found")
@@ -84,13 +84,14 @@ class SetupFragment : Fragment(), SeekBar.OnSeekBarChangeListener {
                 }
             } ?: throw Exception("View not found")
 
-        val button: Button = view?.findViewById(R.id.start)!!
-        button.setOnClickListener {
-            viewModel.start()
-            (activity as MainActivity).viewPager.setCurrentItem(1, true)
-        }
+        val button: Button = view?.findViewById<Button>(R.id.start)?.apply {
+            this.setOnClickListener {
+                viewModel.start()
+                (activity as MainActivity).viewPager.setCurrentItem(1, true)
+            }
+        } ?: throw Exception("Could not find view")
 
-        viewModel.canStart.observe(this, Observer {
+        viewModel.canStartMatch.observe(this, Observer {
             button.isEnabled = it
         })
 
@@ -103,8 +104,8 @@ class SetupFragment : Fragment(), SeekBar.OnSeekBarChangeListener {
 
     override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
         when (seekBar?.id) {
-            R.id.sim_time -> viewModel.setSimTimeSeekBarProgress(progress)
-            else -> viewModel.setRealTimeSeekBarProgress(progress)
+            R.id.sim_time -> viewModel.simTimeSeekBarProgress = progress
+            else -> viewModel.realTimeSeekBarProgress = progress
         }
     }
 

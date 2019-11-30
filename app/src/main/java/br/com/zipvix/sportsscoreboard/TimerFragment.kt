@@ -82,7 +82,7 @@ class TimerFragment : Fragment() {
                 goalMediaPlayer.start()
         }
 
-        viewModel.getHomeTeam().observe(this, Observer { team ->
+        viewModel.homeTeam.observe(this, Observer { team ->
             team?.also {
                 homeTeam.text = team.name
 
@@ -96,7 +96,7 @@ class TimerFragment : Fragment() {
             }
         })
 
-        viewModel.getAwayTeam().observe(this, Observer
+        viewModel.awayTeam.observe(this, Observer
         { team ->
             team?.also {
                 awayTeam.text = team.name
@@ -111,17 +111,17 @@ class TimerFragment : Fragment() {
             }
         })
 
-        viewModel.getHomeScore().observe(this, Observer
+        viewModel.liveHomeScore.observe(this, Observer
         { value ->
             homeScore.text = value.toString()
         })
 
-        viewModel.getAwayScore().observe(this, Observer
+        viewModel.liveAwayScore.observe(this, Observer
         { value ->
             awayScore.text = value.toString()
         })
 
-        viewModel.getSimTime().observe(this, Observer
+        viewModel.simTime.observe(this, Observer
         { value ->
             time.text = value.toString()
         })

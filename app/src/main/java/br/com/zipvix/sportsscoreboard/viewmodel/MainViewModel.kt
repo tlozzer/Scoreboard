@@ -8,87 +8,106 @@ import br.com.zipvix.sportsscoreboard.repository.entity.Team
 
 class MainViewModel(application: Application) : AndroidViewModel(application) {
 
-    private val repository = FirestoreRepository()
-    private var realTimeSeekBarProgress: Int = 2
-    private var simTimeSeekBarProgress: Int = 4
-    private val realTime =
-        MutableLiveData<Long>(getRealTimeFromSeekBarProgress(realTimeSeekBarProgress))
-    private val simTime =
-        MutableLiveData<Long>(getSimTimeFromSeekBarProgress(simTimeSeekBarProgress))
-    private val homeTeam = MutableLiveData<Team>(Team())
-    private val awayTeam = MutableLiveData<Team>(Team())
-    var twoHalf = true
-    private var match: Match =
-        Match(realTime.value?.toInt() ?: 0, simTime.value?.toInt() ?: 0, twoHalf)
-    private val teams = MutableLiveData<List<Team>>()
-    private val _canStart = MediatorLiveData<Boolean>().apply {
-        this.addSource(homeTeam) {
-            this.value = awayTeam.value != null
+    private val _repository = FirestoreRepository()
+
+    var realTimeSeekBarProgress: Int = 2
+        set(value) {
+            field = value
+            _realTime.value = getRealTimeFromSeekBarProgress(value)
         }
-        this.addSource(awayTeam) {
-            this.value = homeTeam.value != null
+
+    var simTimeSeekBarProgress: Int = 4
+        set(value) {
+            field = value
+            _simTime.value = getSimTimeFromSeekBarProgress(value)
+        }
+
+    private val _realTime =
+        MutableLiveData<Long>(getRealTimeFromSeekBarProgress(realTimeSeekBarProgress))
+
+    val realTime: LiveData<Long>
+        get() = _realTime
+
+    private val _simTime =
+        MutableLiveData<Long>(getSimTimeFromSeekBarProgress(simTimeSeekBarProgress))
+
+    val simTime: LiveData<Long>
+        get() = _simTime
+
+    private val _homeTeam = MutableLiveData<Team>()
+
+    val homeTeam: LiveData<Team>
+        get() = _homeTeam
+
+    private val _awayTeam = MutableLiveData<Team>()
+
+    val awayTeam: LiveData<Team>
+        get() = _awayTeam
+
+    var twoHalf = true
+
+    private var _match: Match =
+        Match(_realTime.value?.toInt() ?: 0, _simTime.value?.toInt() ?: 0, twoHalf)
+
+    private val _teams = MutableLiveData<List<Team>>()
+
+    val teams: LiveData<List<Team>>
+        get() = _teams
+
+    private val _canStart = MediatorLiveData<Boolean>().apply {
+        this.addSource(_homeTeam) {
+            this.value = _awayTeam.value != null
+        }
+        this.addSource(_awayTeam) {
+            this.value = _homeTeam.value != null
         }
     }
+
+    val canStartMatch: LiveData<Boolean>
+        get() = _canStart
+
+    val currentHalf = Transformations.map(_match.currentHalf) { it }
+
+    val timeToFinish = Transformations.map(_match.timeToFinish) { it }
+
+    val status = Transformations.map(_match.status) { it }
+
+    val liveHomeScore: LiveData<Int>
+        get() = Transformations.map(_match.homeScore) { it }
+
+    val liveAwayScore: LiveData<Int>
+        get() = Transformations.map(_match.awayScore) { it }
 
     init {
-        repository.listTeams { teamsList ->
-            teams.value = teamsList
+        _repository.listTeams { teamsList ->
+            _teams.value = teamsList
         }
     }
-
-    val currentHalf = Transformations.map(match.currentHalf) { it }
-
-    val timeToFinish = Transformations.map(match.timeToFinish) { it }
-
-    val status = Transformations.map(match.status) { it }
-
-    val canStart: LiveData<Boolean>
-        get() = _canStart
 
     override fun onCleared() {
         super.onCleared()
-        _canStart.removeSource(homeTeam)
-        _canStart.removeSource(awayTeam)
+        _canStart.removeSource(_homeTeam)
+        _canStart.removeSource(_awayTeam)
     }
 
-    fun getTeams(): LiveData<List<Team>> = teams
-
-    fun setRealTimeSeekBarProgress(value: Int) {
-        realTimeSeekBarProgress = value
-        realTime.value = getRealTimeFromSeekBarProgress(value)
-    }
-
-    fun getRealTime(): LiveData<Long> = realTime
-
-    fun setSimTimeSeekBarProgress(value: Int) {
-        simTimeSeekBarProgress = value
-        simTime.value = getSimTimeFromSeekBarProgress(value)
-    }
-
-    fun getSimTime(): LiveData<Long> = simTime
-
-    fun getHomeTeam(): LiveData<Team> = homeTeam
     fun setHomeTeam(team: Team) {
-        if (team != homeTeam.value) {
-            homeTeam.value = team
+        if (team != _homeTeam.value) {
+            _homeTeam.value = team
         }
     }
 
-    fun getAwayTeam(): LiveData<Team> = awayTeam
     fun setAwayTeam(team: Team) {
-        if (team != awayTeam.value) {
-            awayTeam.value = team
+        if (team != _awayTeam.value) {
+            _awayTeam.value = team
         }
     }
 
-    fun getHomeScore(): LiveData<Int> = match.homeScore
     fun addHomeScore() {
-        match.addHomeScore()
+        _match.addHomeScore()
     }
 
-    fun getAwayScore(): LiveData<Int> = match.awayScore
     fun addAwayScore() {
-        match.addAwayScore()
+        _match.addAwayScore()
     }
 
     private fun getRealTimeFromSeekBarProgress(progress: Int): Long {
@@ -114,8 +133,8 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     fun start() {
         _canStart.value?.also {
             if (it) {
-                match = Match(realTime.value?.toInt() ?: 0, simTime.value?.toInt() ?: 0, twoHalf)
-                match.start()
+                _match = Match(_realTime.value?.toInt() ?: 0, _simTime.value?.toInt() ?: 0, twoHalf)
+                _match.start()
             }
         }
     }
