@@ -1,6 +1,7 @@
 package br.com.zipvix.sportsscoreboard
 
 import android.os.Bundle
+import android.view.View
 import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
@@ -9,11 +10,14 @@ import androidx.viewpager.widget.ViewPager
 import br.com.zipvix.sportsscoreboard.adapter.SectionsPagerAdapter
 import br.com.zipvix.sportsscoreboard.business.Scoreboard
 import br.com.zipvix.sportsscoreboard.viewmodel.MainViewModel
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.tabs.TabLayout
+import java.lang.Exception
 
 class MainActivity : AppCompatActivity() {
 
     lateinit var viewPager: ViewPager
+    lateinit var fabNext: FloatingActionButton
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,8 +33,17 @@ class MainActivity : AppCompatActivity() {
         val tabs: TabLayout = findViewById(R.id.tabs)
         tabs.setupWithViewPager(viewPager)
 
-        ViewModelProviders.of(this)[MainViewModel::class.java].also {
+        val viewModel = ViewModelProviders.of(this)[MainViewModel::class.java].also {
             it.status.observe(this, Observer { status ->
+                fabNext.let { fab ->
+                    fab.visibility = if (status == Scoreboard.Status.RUNNING) {
+                        View.GONE
+                    } else {
+                        View.VISIBLE
+                    }
+                }
+
+
                 if (status == Scoreboard.Status.RUNNING) {
                     window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
                 } else {
@@ -38,5 +51,12 @@ class MainActivity : AppCompatActivity() {
                 }
             })
         }
+
+        fabNext = findViewById<FloatingActionButton>(R.id.fab_next)?.also {
+            it.setOnClickListener {
+                viewModel.start()
+                viewPager.setCurrentItem(1, true)
+            }
+        } ?: throw Exception("FAB view not found.")
     }
 }

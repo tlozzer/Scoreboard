@@ -84,13 +84,6 @@ class SetupFragment : Fragment(), SeekBar.OnSeekBarChangeListener {
                 }
             } ?: throw Exception("View not found")
 
-        view?.findViewById<Button>(R.id.start)?.apply {
-            this.setOnClickListener {
-                viewModel.start()
-                (activity as MainActivity).viewPager.setCurrentItem(1, true)
-            }
-        } ?: throw Exception("Could not find view")
-
         view?.findViewById<SwitchMaterial>(R.id.twoHalfsSwitch)?.also {
             it.setOnCheckedChangeListener { _, isChecked ->
                 viewModel.twoHalf = isChecked
