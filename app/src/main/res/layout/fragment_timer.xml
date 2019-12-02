@@ -11,9 +11,10 @@
         android:id="@+id/time_label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:drawableEnd="@drawable/ic_timer_white_24dp"
+        android:drawablePadding="@dimen/drawable_padding"
         android:text="@string/time_label"
         android:textAppearance="@style/TextAppearance.AppCompat.Display1"
-        android:drawableEnd="@drawable/ic_timer_white_24dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -34,6 +35,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
         android:textAppearance="@style/TextAppearance.AppCompat.Display4"
+        android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/time"
         tools:text="10" />
@@ -53,6 +55,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:textAppearance="@style/TextAppearance.AppCompat.Display4"
+        android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/home_score"
         tools:text="10" />
@@ -91,5 +94,15 @@
         app:layout_constraintStart_toStartOf="@+id/away_image"
         app:layout_constraintTop_toBottomOf="@+id/away_image"
         tools:text="Borussia Monfgjhfdkghkhksfksfhbblah" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab_next"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:clickable="true"
+        android:src="@drawable/ic_navigate_next_white_24dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:focusable="true" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

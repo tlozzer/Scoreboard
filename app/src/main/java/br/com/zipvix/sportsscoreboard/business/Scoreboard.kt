@@ -107,7 +107,7 @@ object Scoreboard {
         currentHalf: Int,
         hasTwoHalf: Boolean = true,
         hasExtraTime: Boolean = false,
-        hasPenaltyKicks: Boolean = true
+        hasPenaltyKicks: Boolean = false
     ): Int {
         return if (currentHalf == 1 && hasTwoHalf) {
             2

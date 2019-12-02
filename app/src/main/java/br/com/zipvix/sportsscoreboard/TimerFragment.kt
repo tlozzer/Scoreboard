@@ -14,6 +14,7 @@ import androidx.lifecycle.ViewModelProviders
 import br.com.zipvix.sportsscoreboard.business.Scoreboard
 import br.com.zipvix.sportsscoreboard.glide.GlideApp
 import br.com.zipvix.sportsscoreboard.viewmodel.MainViewModel
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.firebase.storage.FirebaseStorage
 
 class TimerFragment : Fragment() {
@@ -27,6 +28,7 @@ class TimerFragment : Fragment() {
     private lateinit var awayScore: TextView
     private lateinit var homeImage: ImageView
     private lateinit var awayImage: ImageView
+    private lateinit var fabNext: FloatingActionButton
     private val whistleMediaPlayer = MediaPlayer()
     private val goalMediaPlayer = MediaPlayer()
     private var loadWhistleReady = false
@@ -71,6 +73,7 @@ class TimerFragment : Fragment() {
         awayScore = view?.findViewById(R.id.away_score)!!
         homeImage = view?.findViewById(R.id.home_image)!!
         awayImage = view?.findViewById(R.id.away_image)!!
+        fabNext = view?.findViewById(R.id.fab_next)!!
 
         homeScore.setOnClickListener {
             viewModel.addHomeScore()
@@ -82,6 +85,10 @@ class TimerFragment : Fragment() {
             viewModel.addAwayScore()
             if (loadGoalReady)
                 goalMediaPlayer.start()
+        }
+
+        fabNext.setOnClickListener {
+            viewModel.start()
         }
 
         viewModel.currentHalf.observe(this, Observer { half ->
@@ -139,6 +146,14 @@ class TimerFragment : Fragment() {
 
         viewModel.status.observe(this, Observer
         { status ->
+            fabNext.let {
+                it.visibility = if (status == Scoreboard.Status.RUNNING) {
+                    View.GONE
+                } else {
+                    View.VISIBLE
+                }
+            }
+
             if (status == Scoreboard.Status.FINISHING && loadWhistleReady) {
                 whistleMediaPlayer.start()
             }
