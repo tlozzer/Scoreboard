@@ -11,7 +11,7 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
-import br.com.zipvix.sportsscoreboard.business.Match
+import br.com.zipvix.sportsscoreboard.business.Scoreboard
 import br.com.zipvix.sportsscoreboard.glide.GlideApp
 import br.com.zipvix.sportsscoreboard.viewmodel.MainViewModel
 import com.google.firebase.storage.FirebaseStorage
@@ -21,6 +21,7 @@ class TimerFragment : Fragment() {
     private lateinit var viewModel: MainViewModel
     private lateinit var homeTeam: TextView
     private lateinit var awayTeam: TextView
+    private lateinit var timeLabel: TextView
     private lateinit var time: TextView
     private lateinit var homeScore: TextView
     private lateinit var awayScore: TextView
@@ -64,6 +65,7 @@ class TimerFragment : Fragment() {
 
         homeTeam = view?.findViewById(R.id.home_name)!!
         awayTeam = view?.findViewById(R.id.away_name)!!
+        timeLabel = view?.findViewById(R.id.time_label)!!
         time = view?.findViewById(R.id.time)!!
         homeScore = view?.findViewById(R.id.home_score)!!
         awayScore = view?.findViewById(R.id.away_score)!!
@@ -81,6 +83,10 @@ class TimerFragment : Fragment() {
             if (loadGoalReady)
                 goalMediaPlayer.start()
         }
+
+        viewModel.currentHalf.observe(this, Observer { half ->
+            timeLabel.text = getString(R.string.time_label, half)
+        })
 
         viewModel.homeTeam.observe(this, Observer { team ->
             team?.also {
@@ -111,12 +117,12 @@ class TimerFragment : Fragment() {
             }
         })
 
-        viewModel.liveHomeScore.observe(this, Observer
+        viewModel.homeScore.observe(this, Observer
         { value ->
             homeScore.text = value.toString()
         })
 
-        viewModel.liveAwayScore.observe(this, Observer
+        viewModel.awayScore.observe(this, Observer
         { value ->
             awayScore.text = value.toString()
         })
@@ -133,7 +139,7 @@ class TimerFragment : Fragment() {
 
         viewModel.status.observe(this, Observer
         { status ->
-            if (status == Match.Status.FINISHING && loadWhistleReady) {
+            if (status == Scoreboard.Status.FINISHING && loadWhistleReady) {
                 whistleMediaPlayer.start()
             }
         })

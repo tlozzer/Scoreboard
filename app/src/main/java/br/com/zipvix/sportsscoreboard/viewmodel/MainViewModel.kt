@@ -1,8 +1,11 @@
 package br.com.zipvix.sportsscoreboard.viewmodel
 
 import android.app.Application
-import androidx.lifecycle.*
-import br.com.zipvix.sportsscoreboard.business.Match
+import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Transformations
+import br.com.zipvix.sportsscoreboard.business.Scoreboard
 import br.com.zipvix.sportsscoreboard.repository.FirestoreRepository
 import br.com.zipvix.sportsscoreboard.repository.entity.Team
 
@@ -46,48 +49,30 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
 
     var twoHalf = true
 
-    private var _match: Match =
-        Match(_realTime.value?.toInt() ?: 0, _simTime.value?.toInt() ?: 0, twoHalf)
-
     private val _teams = MutableLiveData<List<Team>>()
 
     val teams: LiveData<List<Team>>
         get() = _teams
 
-    private val _canStart = MediatorLiveData<Boolean>().apply {
-        this.addSource(_homeTeam) {
-            this.value = _awayTeam.value != null
-        }
-        this.addSource(_awayTeam) {
-            this.value = _homeTeam.value != null
-        }
-    }
+    val currentHalf: LiveData<Int>
+        get() = Transformations.map(Scoreboard.currentPeriod) { it }
 
-    val canStartMatch: LiveData<Boolean>
-        get() = _canStart
+    val timeToFinish: LiveData<Long>
+        get() = Transformations.map(Scoreboard.timeToFinish) { it }
 
-    val currentHalf = Transformations.map(_match.currentHalf) { it }
+    val status: LiveData<Scoreboard.Status>
+        get() = Transformations.map(Scoreboard.status) { it }
 
-    val timeToFinish = Transformations.map(_match.timeToFinish) { it }
+    val homeScore: LiveData<Int>
+        get() = Transformations.map(Scoreboard.homeScore) { it }
 
-    val status = Transformations.map(_match.status) { it }
-
-    val liveHomeScore: LiveData<Int>
-        get() = Transformations.map(_match.homeScore) { it }
-
-    val liveAwayScore: LiveData<Int>
-        get() = Transformations.map(_match.awayScore) { it }
+    val awayScore: LiveData<Int>
+        get() = Transformations.map(Scoreboard.awayScore) { it }
 
     init {
         _repository.listTeams { teamsList ->
             _teams.value = teamsList
         }
-    }
-
-    override fun onCleared() {
-        super.onCleared()
-        _canStart.removeSource(_homeTeam)
-        _canStart.removeSource(_awayTeam)
     }
 
     fun setHomeTeam(team: Team) {
@@ -103,11 +88,11 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun addHomeScore() {
-        _match.addHomeScore()
+        Scoreboard.addHomeScore()
     }
 
     fun addAwayScore() {
-        _match.addAwayScore()
+        Scoreboard.addAwayScore()
     }
 
     private fun getRealTimeFromSeekBarProgress(progress: Int): Long {
@@ -131,11 +116,6 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun start() {
-        _canStart.value?.also {
-            if (it) {
-                _match = Match(_realTime.value?.toInt() ?: 0, _simTime.value?.toInt() ?: 0, twoHalf)
-                _match.start()
-            }
-        }
+        Scoreboard.start(_realTime.value?.toInt() ?: 0, _simTime.value?.toInt() ?: 0, twoHalf)
     }
 }

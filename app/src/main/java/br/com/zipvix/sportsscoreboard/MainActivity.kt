@@ -7,7 +7,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.viewpager.widget.ViewPager
 import br.com.zipvix.sportsscoreboard.adapter.SectionsPagerAdapter
-import br.com.zipvix.sportsscoreboard.business.Match
+import br.com.zipvix.sportsscoreboard.business.Scoreboard
 import br.com.zipvix.sportsscoreboard.viewmodel.MainViewModel
 import com.google.android.material.tabs.TabLayout
 
@@ -31,7 +31,7 @@ class MainActivity : AppCompatActivity() {
 
         ViewModelProviders.of(this)[MainViewModel::class.java].also {
             it.status.observe(this, Observer { status ->
-                if (status == Match.Status.RUNNING) {
+                if (status == Scoreboard.Status.RUNNING) {
                     window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
                 } else {
                     window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)

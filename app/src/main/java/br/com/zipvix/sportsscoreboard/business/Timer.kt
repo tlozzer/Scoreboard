@@ -1,4 +1,4 @@
-package br.com.zipvix.sportsscoreboard.model
+package br.com.zipvix.sportsscoreboard.business
 
 import android.os.CountDownTimer
 import androidx.lifecycle.LiveData
@@ -18,12 +18,13 @@ object Timer {
             }
 
             override fun onTick(millisUntilFinished: Long) {
-                this@Timer.millisUntilFinished.value = (millisUntilFinished / fraction).toLong()
+                Timer.millisUntilFinished.value = (millisUntilFinished / fraction).toLong()
             }
 
         }
         timer?.start()
     }
 
-    fun getMillisUntilFinish(): LiveData<Long> = millisUntilFinished
+    fun getMillisUntilFinish(): LiveData<Long> =
+        millisUntilFinished
 }

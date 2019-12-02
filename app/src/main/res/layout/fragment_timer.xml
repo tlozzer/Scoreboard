@@ -13,6 +13,7 @@
         android:layout_height="wrap_content"
         android:text="@string/time_label"
         android:textAppearance="@style/TextAppearance.AppCompat.Display1"
+        android:drawableEnd="@drawable/ic_timer_white_24dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
