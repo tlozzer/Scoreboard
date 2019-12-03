@@ -36,10 +36,10 @@ class MainActivity : AppCompatActivity() {
         val viewModel = ViewModelProviders.of(this)[MainViewModel::class.java].also {
             it.status.observe(this, Observer { status ->
                 fabNext.let { fab ->
-                    fab.visibility = if (status == Scoreboard.Status.RUNNING) {
-                        View.GONE
+                    if (status == Scoreboard.Status.RUNNING) {
+                        fab.hide()
                     } else {
-                        View.VISIBLE
+                        fab.show()
                     }
                 }
 
