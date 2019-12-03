@@ -3,124 +3,97 @@ package br.com.zipvix.sportsscoreboard.viewmodel
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
-import br.com.zipvix.sportsscoreboard.model.Timer
+import androidx.lifecycle.Transformations
+import br.com.zipvix.sportsscoreboard.business.Scoreboard
 import br.com.zipvix.sportsscoreboard.repository.FirestoreRepository
 import br.com.zipvix.sportsscoreboard.repository.entity.Team
 
 class MainViewModel(application: Application) : AndroidViewModel(application) {
 
-    private val repository = FirestoreRepository()
+    private val _repository = FirestoreRepository()
 
-    private var realTimeSeekBarProgress: Int = 2
-    private var simTimeSeekBarProgress: Int = 4
-    private val realTime =
+    var realTimeSeekBarProgress: Int = 2
+        set(value) {
+            field = value
+            _realTime.value = getRealTimeFromSeekBarProgress(value)
+        }
+
+    var simTimeSeekBarProgress: Int = 4
+        set(value) {
+            field = value
+            _simTime.value = getSimTimeFromSeekBarProgress(value)
+        }
+
+    private val _realTime =
         MutableLiveData<Long>(getRealTimeFromSeekBarProgress(realTimeSeekBarProgress))
-    private val simTime =
+
+    val realTime: LiveData<Long>
+        get() = _realTime
+
+    private val _simTime =
         MutableLiveData<Long>(getSimTimeFromSeekBarProgress(simTimeSeekBarProgress))
-    private val timeToFinish = MediatorLiveData<Long>()
-    private val homeTeam = MediatorLiveData<Team?>()
-    private val awayTeam = MediatorLiveData<Team?>()
-    private val homeScore = MutableLiveData(0)
-    private val awayScore = MutableLiveData(0)
-    private val homeTeamName = MutableLiveData<String>("")
-    private val awayTeamName = MutableLiveData<String>("")
-    private val status = MutableLiveData<Status>(Status.STOPPED)
-    private val teams = MutableLiveData<List<Team>>()
+
+    val simTime: LiveData<Long>
+        get() = _simTime
+
+    private val _homeTeam = MutableLiveData<Team>()
+
+    val homeTeam: LiveData<Team>
+        get() = _homeTeam
+
+    private val _awayTeam = MutableLiveData<Team>()
+
+    val awayTeam: LiveData<Team>
+        get() = _awayTeam
+
+    var twoHalf = true
+
+    private val _teams = MutableLiveData<List<Team>>()
+
+    val teams: LiveData<List<Team>>
+        get() = _teams
+
+    val currentHalf: LiveData<Int>
+        get() = Transformations.map(Scoreboard.currentPeriod) { it }
+
+    val timeToFinish: LiveData<Long>
+        get() = Transformations.map(Scoreboard.timeToFinish) { it }
+
+    val status: LiveData<Scoreboard.Status>
+        get() = Transformations.map(Scoreboard.status) { it }
+
+    val homeScore: LiveData<Int>
+        get() = Transformations.map(Scoreboard.homeScore) { it }
+
+    val awayScore: LiveData<Int>
+        get() = Transformations.map(Scoreboard.awayScore) { it }
 
     init {
-        timeToFinish.let {
-            it.addSource(Timer.getMillisUntilFinish()) { value ->
-                it.value = value
-            }
-            it.addSource(simTime) { value ->
-                it.value = value * 60 * 1000
-            }
-        }
-
-        homeTeam.let {
-            it.addSource(homeTeamName) { name ->
-                if (name != it.value?.name) {
-                    it.value = null
-                }
-            }
-        }
-
-        awayTeam.let {
-            it.addSource(awayTeamName) { name ->
-                if (name != it.value?.name) {
-                    it.value = null
-                }
-            }
+        _repository.listTeams { teamsList ->
+            _teams.value = teamsList
         }
     }
 
-    override fun onCleared() {
-        super.onCleared()
-        homeTeam.removeSource(homeTeamName)
-        awayTeam.removeSource(awayTeamName)
-    }
-
-    fun loadTeams() {
-        repository.listTeams { teams ->
-            this.teams.value = teams
+    fun setHomeTeam(team: Team) {
+        if (team != _homeTeam.value) {
+            _homeTeam.value = team
         }
     }
 
-    fun getTeams(): LiveData<List<Team>> = teams
-
-    fun setRealTimeSeekBarProgress(value: Int) {
-        realTimeSeekBarProgress = value
-        realTime.value = getRealTimeFromSeekBarProgress(value)
-    }
-
-    fun getRealTime(): LiveData<Long> = realTime
-
-    fun setSimTimeSeekBarProgress(value: Int) {
-        simTimeSeekBarProgress = value
-        simTime.value = getSimTimeFromSeekBarProgress(value)
-    }
-
-    fun getSimTime(): LiveData<Long> = simTime
-
-    fun setHomeTeam(team: Team?) {
-        if (team != homeTeam.value) {
-            homeTeam.value = team
+    fun setAwayTeam(team: Team) {
+        if (team != _awayTeam.value) {
+            _awayTeam.value = team
         }
     }
 
-    fun getHomeTeam(): LiveData<Team?> = homeTeam
-
-    fun getHomeName(): LiveData<String> = homeTeamName
-
-    fun setHomeName(name: String) {
-        homeTeamName.value = name
+    fun addHomeScore() {
+        Scoreboard.addHomeScore()
     }
 
-    fun setAwayTeam(value: Team?) {
-        awayTeam.value = value
+    fun addAwayScore() {
+        Scoreboard.addAwayScore()
     }
-
-    fun getAwayTeam(): LiveData<Team?> = awayTeam
-
-    fun getAwayName(): LiveData<String> = awayTeamName
-
-    fun setAwayName(name: String) {
-        awayTeamName.value = name
-    }
-
-    fun setHomeScore(value: Int) {
-        homeScore.value = value
-    }
-
-    fun getHomeScore(): LiveData<Int> = homeScore
-
-    fun setAwayScore(value: Int) {
-        awayScore.value = value
-    }
-
-    fun getAwayScore(): LiveData<Int> = awayScore
 
     private fun getRealTimeFromSeekBarProgress(progress: Int): Long {
         return when (progress) {
@@ -143,21 +116,6 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun start() {
-        Timer.start((realTime.value ?: 0) * 60 * 1000, (simTime.value ?: 0) * 60 * 1000) {
-            status.value = Status.FINISHING
-            status.value = Status.FINISHED
-        }
-        homeScore.value = 0
-        awayScore.value = 0
-        status.value = Status.STOPPED
-        status.value = Status.RUNNING
-    }
-
-    fun getTimeInMillisToFinish(): LiveData<Long> = timeToFinish
-
-    fun getStatus(): LiveData<Status> = status
-
-    enum class Status {
-        STOPPED, RUNNING, FINISHING, FINISHED
+        Scoreboard.start(_realTime.value?.toInt() ?: 0, _simTime.value?.toInt() ?: 0, twoHalf)
     }
 }

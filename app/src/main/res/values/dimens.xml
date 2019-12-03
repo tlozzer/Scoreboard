@@ -9,4 +9,5 @@
     <dimen name="flag_width">180dp</dimen>
     <dimen name="flag_height">126dp</dimen>
     <dimen name="score_width">180dp</dimen>
+    <dimen name="drawable_padding">8dp</dimen>
 </resources>

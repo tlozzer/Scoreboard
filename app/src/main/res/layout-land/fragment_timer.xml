@@ -12,6 +12,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
+        android:drawableEnd="@drawable/ic_timer_white_24dp"
+        android:drawablePadding="@dimen/drawable_padding"
         android:text="@string/time_label"
         android:textAppearance="@style/TextAppearance.AppCompat.Display1"
         app:layout_constraintBottom_toTopOf="@+id/home_score"
@@ -53,10 +55,10 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:contentDescription="@string/home_team_flag_content"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/home_score"
+        app:layout_constraintBottom_toBottomOf="@+id/vsTextView"
+        app:layout_constraintDimensionRatio="h,10:7"
         app:layout_constraintEnd_toStartOf="@id/home_score"
-        app:layout_constraintDimensionRatio="H,10:7"
+        app:layout_constraintStart_toStartOf="parent"
         tools:src="@drawable/googleg_standard_color_18" />
 
     <TextView
@@ -78,10 +80,10 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:contentDescription="@string/away_team_flag_content"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/away_score"
-        app:layout_constraintStart_toEndOf="@id/away_score"
+        app:layout_constraintBottom_toBottomOf="@+id/vsTextView"
         app:layout_constraintDimensionRatio="H,10:7"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/away_score"
         tools:src="@drawable/googleg_standard_color_18" />
 
     <TextView
@@ -89,12 +91,12 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:ellipsize="marquee"
-        android:gravity="center"
+        android:gravity="start"
         android:maxLines="2"
         android:textAppearance="@style/TextAppearance.AppCompat.Body2"
-        app:layout_constraintEnd_toEndOf="@+id/home_image"
+        app:layout_constraintEnd_toEndOf="@+id/home_score"
         app:layout_constraintStart_toStartOf="@+id/home_image"
-        app:layout_constraintTop_toBottomOf="@+id/home_image"
+        app:layout_constraintTop_toBottomOf="@+id/home_score"
         tools:text="Bayern de Munique" />
 
     <TextView
@@ -102,12 +104,12 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:ellipsize="marquee"
-        android:gravity="center"
+        android:gravity="end"
         android:maxLines="2"
         android:textAppearance="@style/TextAppearance.AppCompat.Body2"
         app:layout_constraintEnd_toEndOf="@+id/away_image"
-        app:layout_constraintStart_toStartOf="@+id/away_image"
-        app:layout_constraintTop_toBottomOf="@+id/away_image"
+        app:layout_constraintStart_toStartOf="@+id/away_score"
+        app:layout_constraintTop_toBottomOf="@+id/away_score"
         tools:text="Borussia Monfgjhfdkghkhksfksfhbblah" />
 
     <TextView
