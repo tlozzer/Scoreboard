@@ -85,8 +85,10 @@ class TimerFragment : Fragment() {
                 goalMediaPlayer.start()
         }
 
+        val periods = resources.getStringArray(R.array.periods)
         viewModel.currentHalf.observe(this, Observer { half ->
-            timeLabel.text = getString(R.string.time_label, half)
+            val period = if (half > 0) half - 1 else half
+            timeLabel.text = periods[period]
         })
 
         viewModel.homeTeam.observe(this, Observer { team ->

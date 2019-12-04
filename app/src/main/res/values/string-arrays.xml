@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="periods">
+        <item>1st</item>
+        <item>2nd</item>
+        <item>1ET</item>
+        <item>2ET</item>
+        <item>PK</item>
+    </string-array>
+</resources>
