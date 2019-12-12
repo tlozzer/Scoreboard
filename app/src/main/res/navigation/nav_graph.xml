@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@+id/teamSelectionFragment">
+    <fragment
+        android:id="@+id/teamSelectionFragment"
+        android:name="br.com.zipvix.sportsscoreboard.TeamSelectionFragment"
+        android:label="Team selection"
+        tools:layout="@layout/fragment_team_selection">
+        <action
+            android:id="@+id/action_teamSelectionFragment_to_configFragment"
+            app:destination="@id/configFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/configFragment"
+        android:name="br.com.zipvix.sportsscoreboard.ConfigFragment"
+        android:label="Setup"
+        tools:layout="@layout/fragment_config">
+        <action
+            android:id="@+id/action_configFragment_to_scoreboardFragment"
+            app:destination="@id/scoreboardFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/scoreboardFragment"
+        android:name="br.com.zipvix.sportsscoreboard.ScoreboardFragment"
+        android:label="Scoreboard"
+        tools:layout="@layout/fragment_scoreboard" />
+</navigation>
